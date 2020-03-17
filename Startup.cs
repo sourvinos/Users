@@ -15,9 +15,8 @@ namespace Users {
 
         public void ConfigureServices(IServiceCollection services) {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-            services.AddSpaStaticFiles(configuration => {
-                configuration.RootPath = "ClientApp/dist";
-            });
+            services.AddSpaStaticFiles(configuration => { configuration.RootPath = "ClientApp/dist"; });
+            services.AddCors(options => { options.AddPolicy("EnableCORS", builder => { builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod().AllowCredentials().Build(); }); });
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env) {
@@ -27,6 +26,7 @@ namespace Users {
                 app.UseExceptionHandler("/Error");
                 app.UseHsts();
             }
+            app.UseCors("EnableCORS");
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
