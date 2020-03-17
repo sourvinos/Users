@@ -1,8 +1,9 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Users.Models;
 
-namespace Users {
+namespace Users.Data {
 
     public class ApplicationDbContext : IdentityDbContext<IdentityUser> {
 
@@ -13,14 +14,14 @@ namespace Users {
             base.OnModelCreating(builder);
 
             builder.Entity<IdentityRole>().HasData(
-                new { Id = 1, Name = "Admin", NormalizedName = "ADMIN" },
-                new { Id = 2, Name = "Customer", NormalizedName = "CUSTOMER" },
-                new { Id = 3, Name = "Moderator", NormalizedName = "MODERATOR" }
+                new { Id = "1", Name = "Admin", NormalizedName = "ADMIN" },
+                new { Id = "2", Name = "Customer", NormalizedName = "CUSTOMER" },
+                new { Id = "3", Name = "Moderator", NormalizedName = "MODERATOR" }
             );
 
         }
 
-        public Product Products { get; set; }
+        public DbSet<Product> Products { get; set; }
 
     }
 

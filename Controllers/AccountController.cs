@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Users.Helpers;
+using Users.Models;
 
 namespace Users.Controllers {
 
@@ -25,7 +27,7 @@ namespace Users.Controllers {
             _appSettings = appSettings.Value;
         }
 
-        [HttpPost("action")]
+        [HttpPost("[action]")]
         public async Task<IActionResult> Register([FromBody] RegisterViewModel formData) {
 
             List<string> errorList = new List<string>();
