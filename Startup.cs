@@ -25,6 +25,7 @@ namespace Users {
         public IConfiguration Configuration { get; }
 
         public void ConfigureServices(IServiceCollection services) {
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddSpaStaticFiles(configuration => { configuration.RootPath = "ClientApp/dist"; });
             services.AddCors(options => { options.AddPolicy("EnableCORS", builder => { builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod().AllowCredentials().Build(); }); });
@@ -63,6 +64,11 @@ namespace Users {
                     };
                 }).AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
                     Configuration.Bind("CookieSettings", options));
+
+            services.AddAuthorization(options => {
+                options.AddPolicy("RequireLoggedIn", policy => policy.RequireRole("Admin", "Customer", "Moderator").RequireAuthenticatedUser());
+                options.AddPolicy("RequireAdministratorRole", policy => policy.RequireRole("Admin").RequireAuthenticatedUser());
+            });
 
         }
 

@@ -1,5 +1,7 @@
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Users.Data;
@@ -8,6 +10,8 @@ using Users.Models;
 namespace Users.Controllers {
 
     [Route("api/[controller]")]
+    [Authorize("RequireLoggedIn")]
+
     public class ProductController : Controller {
 
         private readonly ApplicationDbContext _db;
@@ -35,6 +39,7 @@ namespace Users.Controllers {
         }
 
         [HttpPost("[action]")]
+        [Authorize("RequireAdministratorRole")]
         public async Task<IActionResult> AddProduct([FromBody] Product formData) {
 
             if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -55,6 +60,7 @@ namespace Users.Controllers {
         }
 
         [HttpPut("[action]/{id}")]
+        [Authorize("RequireAdministratorRole")]
         public async Task<IActionResult> UpdateProduct([FromRoute] int id, [FromBody] Product formData) {
 
             if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -79,6 +85,7 @@ namespace Users.Controllers {
         }
 
         [HttpDelete("[action]/{id}")]
+        [Authorize("RequireAdministratorRole")]
         public async Task<IActionResult> DeleteProduct(int id) {
 
             var findProduct = _db.Products.FirstOrDefault(p => p.ProductId == id);
