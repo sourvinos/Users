@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { Observable } from 'rxjs';
+import { AccountService } from '../services/account.service';
 
 @Component({
     selector: 'app-nav-menu',
@@ -8,6 +10,14 @@ import { Component } from '@angular/core';
 
 export class NavMenuComponent {
 
+    loginStatus: Observable<boolean>;
+    userName: Observable<string>;
+
+    constructor(private accountService: AccountService) {
+        this.loginStatus = this.accountService.isLoggedIn;
+        this.userName = this.accountService.currentUsername;
+    }
+
     isExpanded = false;
 
     collapse() {
@@ -16,6 +26,10 @@ export class NavMenuComponent {
 
     toggle() {
         this.isExpanded = !this.isExpanded;
+    }
+
+    logout() {
+        this.accountService.logout();
     }
 
 }

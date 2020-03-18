@@ -6,7 +6,7 @@
                 <form class="login-form" method="post" [formGroup]="insertForm" (ngSubmit)="register()">
                     <div class="form-group">
                         <label for="username" class="text-uppercase">Username</label>
-                        <input id="username" formControlName="username" type="text" class="form-control" placeholder="" required autofocus>
+                        <input id="username" formControlName="username" type="text" class="form-control" placeholder="" required>
                         <div *ngIf="Username.touched && Username.errors" class="text-danger">
                             <span *ngIf="Username.hasError('required')">Username is required.</span>
                         </div>

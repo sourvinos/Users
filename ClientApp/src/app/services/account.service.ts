@@ -45,7 +45,7 @@ export class AccountService {
         localStorage.removeItem('expiration');
         localStorage.removeItem('userRole');
         this.loginStatus.next(false);
-        this.router.navigate(['/login']);
+        this.router.navigate(['/']);
     }
 
     checkLoginStatus() {

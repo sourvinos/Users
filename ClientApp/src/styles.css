@@ -45,3 +45,11 @@ p, li {
 label {
     color: beige;
 }
+
+a {
+    color: aquamarine !important;
+}
+
+a:hover {
+    cursor: pointer;
+}

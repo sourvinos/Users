@@ -10,20 +10,17 @@
                     <li class="nav-item" [routerLinkActive]='["link-active"]' [routerLinkActiveOptions]='{ exact: true }'>
                         <a class="nav-link" [routerLink]='["/"]'>Home</a>
                     </li>
-                    <li class="nav-item" [routerLinkActive]='["link-active"]' [routerLinkActiveOptions]='{ exact: true }'>
-                        <a class="nav-link" [routerLink]='["/products"]'>Products</a>
+                    <li *ngIf="(loginStatus | async)" class="nav-item" [routerLinkActive]='["link-active"]' [routerLinkActiveOptions]='{ exact: true }'>
+                        <a *ngIf="loginStatus" class="nav-link" [routerLink]='["/products"]'>Products</a>
                     </li>
-                    <li class="nav-item" [routerLinkActive]='["link-active"]' [routerLinkActiveOptions]='{ exact: true }'>
-                        <a class="nav-link" [routerLink]='["/login"]'>Login</a>
+                    <li *ngIf="!(loginStatus | async) as loginStatus" class="nav-item" [routerLinkActive]='["link-active"]' [routerLinkActiveOptions]='{ exact: true }'>
+                        <a *ngIf="loginStatus" class="nav-link" [routerLink]='["/login"]'>Login</a>
                     </li>
-                    <li class="nav-item" [routerLinkActive]='["link-active"]' [routerLinkActiveOptions]='{ exact: true }'>
-                        <a class="nav-link" [routerLink]='["/register"]'>Register</a>
+                    <li *ngIf="!(loginStatus | async) as loginStatus" class="nav-item" [routerLinkActive]='["link-active"]' [routerLinkActiveOptions]='{ exact: true }'>
+                        <a *ngIf="loginStatus" class="nav-link" [routerLink]='["/register"]'>Register</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link"></a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="btn btn-info">Logout</a>
+                    <li *ngIf="(loginStatus | async)" class="nav-item">
+                        <a *ngIf="loginStatus" class="btn btn-info" (click)="logout()">Logout</a>
                     </li>
                 </ul>
             </div>
