@@ -1,0 +1,47 @@
+body {
+    background-color: #444444;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.container {
+    height: inherit;
+}
+
+h1, h2, h3 {
+    color: #138496;
+}
+
+p, li {
+    color: aliceblue;
+}
+
+.navbar {
+    background-color: #000000 !important;
+}
+
+.border-bottom {
+    color: #6383a2;
+}
+
+.navbar-brand {
+    color: aliceblue !important;
+}
+
+.nav-link {
+    color: aliceblue !important;
+}
+
+.link-active a {
+    color: #ffc107 !important;
+    font-weight: bold;
+}
+
+.nav-link:hover {
+    color: #ffc107 !important;
+}
+
+label {
+    color: beige;
+}
