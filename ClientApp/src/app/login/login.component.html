@@ -9,7 +9,7 @@
         <div class="row">
             <div class="col-md-4 login-sec">
                 <h2 class="text-center">Login Now</h2>
-                <form class="login-form form" [formGroup]="insertForm" (ngSubmit)="onSubmit()">
+                <form class="login-form form" [formGroup]="insertForm" (ngSubmit)="login()">
                     <div class="form-group">
                         <label for="username" class="text-uppercase">Username</label>
                         <input formControlName="username" type="text" class="form-control" placeholder="" required autofocus>

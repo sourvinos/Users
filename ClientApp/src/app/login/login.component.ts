@@ -34,7 +34,7 @@ export class LoginComponent implements OnInit {
         });
     }
 
-    onSubmit() {
+    login() {
         const userLogin = this.insertForm.value;
         this.accountService.login(userLogin.username, userLogin.password).subscribe(result => {
             this.invalidLogin = false;

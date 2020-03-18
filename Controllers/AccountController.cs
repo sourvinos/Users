@@ -42,7 +42,9 @@ namespace Users.Controllers {
 
             if (result.Succeeded) {
                 await _userManager.AddToRoleAsync(user, "Customer");
-                return Ok("Registration successful");
+                // MUST return JSON or NOTHING, otherwise Angular will complain with 'invalid characters'
+                // i.e. return Ok()
+                return Ok(new { username = user.UserName, email = user.Email, status = 1, message = "Registration Successful" });
             }
 
             foreach (var error in result.Errors) {
