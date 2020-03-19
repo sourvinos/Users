@@ -11,11 +11,9 @@ import { AccountService } from '../services/account.service';
 export class NavMenuComponent {
 
     loginStatus: Observable<boolean>;
-    userName: Observable<string>;
 
     constructor(private accountService: AccountService) {
         this.loginStatus = this.accountService.isLoggedIn;
-        this.userName = this.accountService.currentUsername;
     }
 
     isExpanded = false;

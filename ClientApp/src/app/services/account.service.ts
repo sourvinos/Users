@@ -13,7 +13,7 @@ export class AccountService {
 
     private loginStatus = new BehaviorSubject<boolean>(this.checkLoginStatus());
     private username = new BehaviorSubject<string>(localStorage.getItem('username'));
-    private userRole = new BehaviorSubject<string>(localStorage.getItem('password'));
+    private userRole = new BehaviorSubject<string>(localStorage.getItem('userRole'));
 
     constructor(private http: HttpClient, private router: Router) { }
 
@@ -33,7 +33,7 @@ export class AccountService {
                 localStorage.setItem('jwt', result.token);
                 localStorage.setItem('username', result.username);
                 localStorage.setItem('expiration', result.expiration);
-                localStorage.setItem('userRole', result.userRole);
+                localStorage.setItem('userRole', result.role);
             }
         }));
     }

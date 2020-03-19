@@ -78,12 +78,12 @@ namespace Users.Controllers {
                     SigningCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature),
                     Issuer = _appSettings.Site,
                     Audience = _appSettings.Audience,
-                    Expires = DateTime.UtcNow.AddMinutes(tokenExpiryTime)
+                    Expires = DateTime.UtcNow.AddMinutes(tokenExpiryTime),
                 };
 
                 var token = tokenHandler.CreateToken(tokenDescriptor);
 
-                return Ok(new { token = tokenHandler.WriteToken(token), expiration = token.ValidTo, username = user.UserName });
+                return Ok(new { token = tokenHandler.WriteToken(token), expiration = token.ValidTo, username = user.UserName, role = roles.FirstOrDefault() });
 
             }
 
