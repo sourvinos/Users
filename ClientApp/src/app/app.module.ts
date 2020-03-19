@@ -9,6 +9,7 @@ import { LoginComponent } from './login/login.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
 import { ProductsComponent } from './products/products.component';
 import { RegisterComponent } from './register/register.component';
+import { AuthGuardService } from 'src/guards/auth-guard.service';
 
 @NgModule({
     declarations: [
@@ -29,7 +30,7 @@ import { RegisterComponent } from './register/register.component';
             { path: 'home', redirectTo: '/' },
             { path: 'register', component: RegisterComponent },
             { path: 'login', component: LoginComponent },
-            { path: 'products', component: ProductsComponent },
+            { path: 'products', component: ProductsComponent, canActivate: [AuthGuardService] },
             { path: '**', redirectTo: '/' }
         ])
     ],
