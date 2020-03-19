@@ -4,7 +4,7 @@
         {
             "type": "chrome",
             "request": "launch",
-            "name": "Angular",
+            "name": "Front-end",
             "url": "https://localhost:5001",
             "webRoot": "${workspaceFolder}/ClientApp",
             "skipFiles": [
@@ -12,7 +12,7 @@
             ]
         },
         {
-            "name": ".NET Core Launch (web)",
+            "name": "Back-end",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",

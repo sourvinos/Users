@@ -12,6 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Users.Data;
+using Users.Email;
 using Users.Helpers;
 
 namespace Users {
@@ -27,6 +28,7 @@ namespace Users {
         public void ConfigureServices(IServiceCollection services) {
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddSendGridEmailSender();
             services.AddSpaStaticFiles(configuration => { configuration.RootPath = "ClientApp/dist"; });
             services.AddCors(options => { options.AddPolicy("EnableCORS", builder => { builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod().Build(); }); });
             services.AddDbContext<ApplicationDbContext>(options => options.UseMySql(Configuration["ConnectionStrings:MySqlServerConnection"]));

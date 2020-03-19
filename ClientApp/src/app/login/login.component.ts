@@ -41,7 +41,7 @@ export class LoginComponent implements OnInit {
             this.router.navigateByUrl(this.returnUrl);
         }, error => {
             this.invalidLogin = true;
-            this.errorMessage = 'Invalid credentials';
+            this.errorMessage = error.error.loginError;
             console.log(error);
         });
     }

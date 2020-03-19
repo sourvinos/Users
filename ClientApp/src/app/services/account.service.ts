@@ -34,6 +34,8 @@ export class AccountService {
                 localStorage.setItem('username', result.username);
                 localStorage.setItem('expiration', result.expiration);
                 localStorage.setItem('userRole', result.role);
+                this.username.next(localStorage.getItem('username'));
+                this.userRole.next(localStorage.getItem('userRole'));
             }
         }));
     }

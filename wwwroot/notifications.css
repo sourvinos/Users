@@ -1,0 +1,14 @@
+body {
+    background-color: #444444;
+    display: flex;
+    flex-direction: column;
+    font-family: "Tahoma";
+}
+
+.container {
+    height: inherit;
+}
+
+h1, h2, h3 {
+    color: #ffc107;
+}

@@ -5,10 +5,12 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Users.Email;
 using Users.Helpers;
 using Users.Models;
 
@@ -20,11 +22,13 @@ namespace Users.Controllers {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly AppSettings _appSettings;
+        private readonly IEmailSender _emailSender;
 
-        public AccountController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, IOptions<AppSettings> appSettings) {
+        public AccountController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, IEmailSender emailSender, IOptions<AppSettings> appSettings) {
             _userManager = userManager;
             _signInManager = signInManager;
             _appSettings = appSettings.Value;
+            _emailSender = emailSender;
         }
 
         [HttpPost("[action]")]
@@ -41,10 +45,22 @@ namespace Users.Controllers {
             var result = await _userManager.CreateAsync(user, formData.Password);
 
             if (result.Succeeded) {
+
                 await _userManager.AddToRoleAsync(user, "Customer");
+
+                // Create email token
+                var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+
+                // Create the full url that will be sent via email
+                var callbackUrl = Url.Action("ConfirmEmail", "Account", new { UserId = user.Id, Code = code }, protocol : HttpContext.Request.Scheme);
+
+                // Send the email
+                await _emailSender.SendEmailAsync(user.Email, "Techhowdy.com - Confirm Your Email", "Please confirm your e-mail by clicking this link: <a href=\"" + callbackUrl + "\">click here</a>");
+
                 // MUST return JSON or NOTHING, otherwise Angular will complain with 'invalid characters'
                 // i.e. return Ok()
                 return Ok(new { username = user.UserName, email = user.Email, status = 1, message = "Registration Successful" });
+
             }
 
             foreach (var error in result.Errors) {
@@ -60,12 +76,18 @@ namespace Users.Controllers {
         public async Task<IActionResult> Login([FromBody] LoginViewModel formData) {
 
             var user = await _userManager.FindByNameAsync(formData.Username);
-            var roles = await _userManager.GetRolesAsync(user);
             var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_appSettings.Secret));
             var tokenExpiryTime = Convert.ToDouble(_appSettings.ExpireTime);
 
             if (user != null && await _userManager.CheckPasswordAsync(user, formData.Password)) {
 
+                if (!await _userManager.IsEmailConfirmedAsync(user)) {
+                    ModelState.AddModelError(string.Empty, "User Has not Confirmed Email.");
+                    // This will be caught by the login method in the front-end
+                    return Unauthorized(new { LoginError = "We sent you an Confirmation Email. Please Confirm Your Registration With Techhowdy.com To Log in." });
+                }
+
+                var roles = await _userManager.GetRolesAsync(user);
                 var tokenHandler = new JwtSecurityTokenHandler();
                 var tokenDescriptor = new SecurityTokenDescriptor {
                     Subject = new ClaimsIdentity(new Claim[] {
@@ -90,6 +112,46 @@ namespace Users.Controllers {
             ModelState.AddModelError("", "Invalid credentials");
 
             return Unauthorized(new { LoginError = "Invalid credentials" });
+
+        }
+
+        [HttpGet("[action]")]
+        [AllowAnonymous]
+        // Will be called from the email that was sent to the registered user
+        public async Task<IActionResult> ConfirmEmail(string userId, string code) {
+
+            if (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(code)) {
+                ModelState.AddModelError("", "User Id and code are required");
+                return BadRequest(ModelState);
+            }
+
+            var user = await _userManager.FindByIdAsync(userId);
+
+            if (user == null) {
+                return new JsonResult("Error");
+            }
+
+            if (user.EmailConfirmed) {
+                return Redirect("/login");
+            }
+
+            var result = await _userManager.ConfirmEmailAsync(user, code);
+
+            if (result.Succeeded) {
+
+                return RedirectToAction("EmailConfirmed", "Notifications", new { userId, code });
+
+            } else {
+
+                List<string> errors = new List<string>();
+
+                foreach (var error in result.Errors) {
+                    errors.Add(error.ToString());
+                }
+
+                return new JsonResult(errors);
+
+            }
 
         }
 
