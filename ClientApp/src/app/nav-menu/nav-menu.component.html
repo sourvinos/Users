@@ -20,6 +20,9 @@
                         <a *ngIf="loginStatus" class="nav-link" [routerLink]='["/register"]'>Register</a>
                     </li>
                     <li *ngIf="(loginStatus | async)" class="nav-item">
+                        <a *ngIf="loginStatus" class="btn">{{ userName | async }}</a>
+                    </li>
+                    <li *ngIf="(loginStatus | async)" class="nav-item">
                         <a *ngIf="loginStatus" class="btn btn-info" (click)="logout()">Logout</a>
                     </li>
                 </ul>

@@ -41,7 +41,7 @@ export class AccountService {
     }
 
     logout() {
-        localStorage.setItem('loginStatus', '0');
+        localStorage.removeItem('loginStatus');
         localStorage.removeItem('jwt');
         localStorage.removeItem('username');
         localStorage.removeItem('expiration');
@@ -51,7 +51,7 @@ export class AccountService {
     }
 
     checkLoginStatus() {
-        return false;
+        return Boolean(localStorage.getItem('loginStatus'));
     }
 
     get isLoggedIn() {
