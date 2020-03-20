@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
+import * as jwtDecode from 'jwt-decode';
 
 @Injectable({ providedIn: 'root' })
 
@@ -51,7 +52,17 @@ export class AccountService {
     }
 
     checkLoginStatus() {
-        return Boolean(localStorage.getItem('loginStatus'));
+        const token = localStorage.getItem('jwt');
+        const decoded = jwtDecode(token);
+        const date = new Date(0);
+        const expire = date.setUTCSeconds(decoded['exp']);
+        const now = new Date().valueOf();
+
+        if (expire > now) {
+            return Boolean(localStorage.getItem('loginStatus'));
+        } else {
+            this.logout();
+        }
     }
 
     get isLoggedIn() {

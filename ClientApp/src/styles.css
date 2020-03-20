@@ -57,3 +57,7 @@ a:hover {
 th, td {
     color: beige;
 }
+
+.right-align {
+    text-align: right;
+}

@@ -1,9 +1,9 @@
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
-import { AuthGuardService } from 'src/guards/auth-guard.service';
+import { AuthGuardService } from 'src/app/helpers/auth-guard.service';
 import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
 import { LoginComponent } from './login/login.component';
@@ -12,6 +12,7 @@ import { ProductDetailsComponent } from './products/ui/product-details.component
 import { ProductListComponent } from './products/ui/product-list.component';
 import { ProductUpdateComponent } from './products/ui/product-update.component';
 import { RegisterComponent } from './register/register.component';
+import { HttpInterceptor } from './helpers/http-interceptor';
 
 @NgModule({
     declarations: [
@@ -34,12 +35,12 @@ import { RegisterComponent } from './register/register.component';
             { path: 'home', redirectTo: '/' },
             { path: 'register', component: RegisterComponent },
             { path: 'login', component: LoginComponent },
-            { path: 'products', component: ProductListComponent },
+            { path: 'products', component: ProductListComponent, canActivate: [AuthGuardService] },
             { path: 'products/:id', component: ProductDetailsComponent, canActivate: [AuthGuardService] },
             { path: '**', redirectTo: '/' }
         ])
     ],
-    providers: [],
+    providers: [AuthGuardService, { provide: HTTP_INTERCEPTORS, useClass: HttpInterceptor, multi: true }],
     bootstrap: [AppComponent]
 })
 

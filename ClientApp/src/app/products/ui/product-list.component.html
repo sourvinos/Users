@@ -16,7 +16,7 @@
             <td>{{ product.name }}</td>
             <td>{{ product.description }}</td>
             <td>{{ true == product.outOfStock ? 'Yes' : 'No'}}</td>
-            <td>{{ product.price }}</td>
+            <td class="right-align">{{ product.price | number : '.2' }}</td>
             <td>
                 <div class="btn-group mt-2" role="group">
                     <button type="button" class="btn btn-info"><i class="fa fa-list"></i></button>
