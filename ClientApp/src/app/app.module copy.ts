@@ -8,10 +8,9 @@ import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
 import { LoginComponent } from './login/login.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
-import { ProductDetailsComponent } from './products/ui/product-details.component';
 import { ProductListComponent } from './products/ui/product-list.component';
-import { ProductUpdateComponent } from './products/ui/product-update.component';
 import { RegisterComponent } from './register/register.component';
+import { ProductDetailsComponent } from './products/ui/product-details.component';
 
 @NgModule({
     declarations: [
@@ -21,8 +20,7 @@ import { RegisterComponent } from './register/register.component';
         RegisterComponent,
         LoginComponent,
         ProductListComponent,
-        ProductDetailsComponent,
-        ProductUpdateComponent,
+        ProductDetailsComponent
     ],
     imports: [
         BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -34,8 +32,7 @@ import { RegisterComponent } from './register/register.component';
             { path: 'home', redirectTo: '/' },
             { path: 'register', component: RegisterComponent },
             { path: 'login', component: LoginComponent },
-            { path: 'products', component: ProductListComponent },
-            { path: 'products/:id', component: ProductDetailsComponent, canActivate: [AuthGuardService] },
+            { path: 'products', component: ProductListComponent, canActivate: [AuthGuardService] },
             { path: '**', redirectTo: '/' }
         ])
     ],

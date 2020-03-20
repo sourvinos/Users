@@ -1,4 +1,4 @@
-import { ProductService } from './../products/product.service';
+import { ProductService } from '../products/classes/product.service';
 import { Component } from '@angular/core';
 import { Observable } from 'rxjs';
 import { AccountService } from '../services/account.service';

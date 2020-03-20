@@ -9,7 +9,7 @@ using Users.Models;
 namespace Users.Controllers {
 
     [Route("api/[controller]")]
-    [Authorize("RequireLoggedIn")]
+    // [Authorize("RequireLoggedIn")]
 
     public class ProductController : ControllerBase {
 
