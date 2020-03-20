@@ -1,3 +1,4 @@
+import { ProductService } from './../products/product.service';
 import { Component } from '@angular/core';
 import { Observable } from 'rxjs';
 import { AccountService } from '../services/account.service';
@@ -13,7 +14,7 @@ export class NavMenuComponent {
     loginStatus: Observable<boolean>;
     userName: Observable<string>;
 
-    constructor(private accountService: AccountService) {
+    constructor(private accountService: AccountService, private productService: ProductService) {
         this.loginStatus = this.accountService.isLoggedIn;
         this.userName = this.accountService.currentUsername;
     }
@@ -29,6 +30,7 @@ export class NavMenuComponent {
     }
 
     logout() {
+        this.productService.clearCache();
         this.accountService.logout();
     }
 
