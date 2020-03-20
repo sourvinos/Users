@@ -2,10 +2,9 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using SendGrid;
 using SendGrid.Helpers.Mail;
-using Users.Email;
 using Users.Helpers;
 
-namespace Users.Services {
+namespace Users.Email {
 
     public class SendGridEmailSender : IEmailSender {
 
@@ -19,9 +18,9 @@ namespace Users.Services {
 
             var apiKey = _appSettings.SendGridKey;
             var client = new SendGridClient(apiKey);
-            var from = new EmailAddress("test@example.com", "Example User");
+            var from = new EmailAddress("no-reply@testingapplication.com", "Testing Application");
             var subject = emailSubject;
-            var to = new EmailAddress(userEmail, "Example Email");
+            var to = new EmailAddress(userEmail, "Testing Application");
             var plainTextContent = message;
             var htmlContent = message;
             var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);

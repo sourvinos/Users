@@ -11,7 +11,7 @@ namespace Users.Controllers {
     [Route("api/[controller]")]
     [Authorize("RequireLoggedIn")]
 
-    public class ProductController : Controller {
+    public class ProductController : ControllerBase {
 
         private readonly ApplicationDbContext _db;
 

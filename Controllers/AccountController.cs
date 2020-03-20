@@ -17,7 +17,7 @@ using Users.Models;
 namespace Users.Controllers {
 
     [Route("api/[controller]")]
-    public class AccountController : Controller {
+    public class AccountController : ControllerBase {
 
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
@@ -117,7 +117,6 @@ namespace Users.Controllers {
 
         [HttpGet("[action]")]
         [AllowAnonymous]
-        // Will be called from the email that was sent to the registered user
         public async Task<IActionResult> ConfirmEmail(string userId, string code) {
 
             if (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(code)) {
@@ -127,13 +126,8 @@ namespace Users.Controllers {
 
             var user = await _userManager.FindByIdAsync(userId);
 
-            if (user == null) {
-                return new JsonResult("Error");
-            }
-
-            if (user.EmailConfirmed) {
-                return Redirect("/login");
-            }
+            if (user == null) { return new JsonResult("Error"); }
+            if (user.EmailConfirmed) { return Redirect("/login"); }
 
             var result = await _userManager.ConfirmEmailAsync(user, code);
 
