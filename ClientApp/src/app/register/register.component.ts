@@ -15,6 +15,7 @@ export class RegisterComponent implements OnInit {
     password: FormControl;
     cpassword: FormControl;
     email: FormControl;
+    invalidRegister: boolean
     errorList: string[] = [];
 
     constructor(private fb: FormBuilder, private accountService: AccountService, private router: Router) { }
@@ -36,12 +37,13 @@ export class RegisterComponent implements OnInit {
         const userRegister = this.insertForm.value;
         this.accountService.register(userRegister.username, userRegister.password, userRegister.email).subscribe((result) => {
             console.log(result)
+            this.invalidRegister = false
             this.router.navigateByUrl('/login');
         }, error => {
+            this.invalidRegister = true
             error.error.value.forEach((element: string) => {
                 this.errorList.push(element);
             });
-            console.log(this.errorList);
         });
     }
 

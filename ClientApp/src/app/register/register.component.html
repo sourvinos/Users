@@ -1,4 +1,11 @@
 <section class="register-block">
+    <div class="text-center mb-3 alert alert-warning alert-dismissible" *ngIf="invalidRegister" role="alert">
+        <strong *ngFor="let error of errorList">{{ error }}</strong>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
     <div class="container signLog">
         <div class="row">
             <div class="col-md-4 register-sec">
