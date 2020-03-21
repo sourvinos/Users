@@ -16,7 +16,7 @@ export class AuthGuardService implements CanActivate {
 
     canActivate(): Observable<boolean> {
         return this.accountService.isLoggedIn.pipe(map((loginStatus: boolean) => {
-            if (!loginStatus) {
+            if (!loginStatus && loginStatus !== undefined) {
                 this.accountService.clearLocalStorage()
                 this.router.navigate(['/login'])
                 return false

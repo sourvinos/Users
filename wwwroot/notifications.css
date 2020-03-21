@@ -1,3 +1,7 @@
+* {
+    font-family: "PF Handbook Pro Thin";
+}
+
 body {
     background-color: #444444;
     display: flex;

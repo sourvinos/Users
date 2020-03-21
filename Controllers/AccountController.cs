@@ -17,14 +17,15 @@ using Users.Models;
 namespace Users.Controllers {
 
     [Route("api/[controller]")]
+
     public class AccountController : ControllerBase {
 
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly AppSettings _appSettings;
         private readonly IEmailSender _emailSender;
 
-        public AccountController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, IEmailSender emailSender, IOptions<AppSettings> appSettings) {
+        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IEmailSender emailSender, IOptions<AppSettings> appSettings) {
             _userManager = userManager;
             _signInManager = signInManager;
             _appSettings = appSettings.Value;
@@ -36,7 +37,7 @@ namespace Users.Controllers {
 
             List<string> errorList = new List<string>();
 
-            var user = new IdentityUser {
+            var user = new ApplicationUser {
                 Email = formData.Email,
                 UserName = formData.Username,
                 SecurityStamp = Guid.NewGuid().ToString()

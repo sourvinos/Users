@@ -14,6 +14,7 @@ using Microsoft.IdentityModel.Tokens;
 using Users.Data;
 using Users.Email;
 using Users.Helpers;
+using Users.Models;
 
 namespace Users {
 
@@ -31,8 +32,9 @@ namespace Users {
             services.AddSendGridEmailSender();
             services.AddSpaStaticFiles(configuration => { configuration.RootPath = "ClientApp/dist"; });
             services.AddCors(options => { options.AddPolicy("EnableCORS", builder => { builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod().Build(); }); });
+            services.AddScoped<Token>();
             services.AddDbContext<ApplicationDbContext>(options => options.UseMySql(Configuration["ConnectionStrings:MySqlServerConnection"]));
-            services.AddIdentity<IdentityUser, IdentityRole>(options => {
+            services.AddIdentity<ApplicationUser, IdentityRole>(options => {
                 options.Password.RequireDigit = false;
                 options.Password.RequiredLength = 1;
                 options.Password.RequireNonAlphanumeric = false;

@@ -22,6 +22,7 @@ namespace Users.Data {
         }
 
         public DbSet<Product> Products { get; set; }
+        public DbSet<Token> Tokens { get; set; }
 
     }
 
