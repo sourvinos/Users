@@ -48,16 +48,9 @@ namespace Users.Controllers {
             if (result.Succeeded) {
 
                 await _userManager.AddToRoleAsync(user, "Customer");
-
-                // Create email token
                 var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-
-                // Create the full url that will be sent via email
                 var callbackUrl = Url.Action("ConfirmEmail", "Account", new { UserId = user.Id, Code = code }, protocol : HttpContext.Request.Scheme);
-
-                // Send the email
                 _emailSender.SendRegistrationEmail(user.Email, user.UserName, callbackUrl);
-
                 // MUST return JSON or NOTHING, otherwise Angular will complain with 'invalid characters'
                 // i.e. return Ok()
                 return Ok(new { username = user.UserName, email = user.Email, status = 1, message = "Registration Successful" });
@@ -70,49 +63,6 @@ namespace Users.Controllers {
             }
 
             return BadRequest(new JsonResult(errorList));
-
-        }
-
-        [HttpPost("[action]")]
-        public async Task<IActionResult> Login([FromBody] LoginViewModel formData) {
-
-            var user = await _userManager.FindByNameAsync(formData.Username);
-            var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_appSettings.Secret));
-            var tokenExpiryTime = Convert.ToDouble(_appSettings.ExpireTime);
-
-            if (user != null && await _userManager.CheckPasswordAsync(user, formData.Password)) {
-
-                if (!await _userManager.IsEmailConfirmedAsync(user)) {
-                    ModelState.AddModelError(string.Empty, "User Has not Confirmed Email.");
-                    // This will be caught by the login method in the front-end
-                    return Unauthorized(new { LoginError = "We sent you an Confirmation Email. Please Confirm Your Registration With Techhowdy.com To Log in." });
-                }
-
-                var roles = await _userManager.GetRolesAsync(user);
-                var tokenHandler = new JwtSecurityTokenHandler();
-                var tokenDescriptor = new SecurityTokenDescriptor {
-                    Subject = new ClaimsIdentity(new Claim[] {
-                    new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
-                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                    new Claim(ClaimTypes.NameIdentifier, user.Id),
-                    new Claim(ClaimTypes.Role, roles.FirstOrDefault()),
-                    new Claim("LoggedOn", DateTime.Now.ToString())
-                    }),
-                    SigningCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature),
-                    Issuer = _appSettings.Site,
-                    Audience = _appSettings.Audience,
-                    Expires = DateTime.UtcNow.AddMinutes(tokenExpiryTime),
-                };
-
-                var token = tokenHandler.CreateToken(tokenDescriptor);
-
-                return Ok(new { token = tokenHandler.WriteToken(token), expiration = token.ValidTo, username = user.UserName, role = roles.FirstOrDefault() });
-
-            }
-
-            ModelState.AddModelError("", "Invalid credentials");
-
-            return Unauthorized(new { LoginError = "Invalid credentials" });
 
         }
 
@@ -159,9 +109,9 @@ namespace Users.Controllers {
 
                 if (user != null && await _userManager.IsEmailConfirmedAsync(user)) {
                     string token = await _userManager.GeneratePasswordResetTokenAsync(user);
-                    string callbackUrl = Url.Action("ResetPassword", "Account", new { email = model.Email, token }, protocol : HttpContext.Request.Scheme);
+                    var callbackUrl = Url.Action("ResetPassword", "Account", new { Email = model.Email, Token = token }, protocol : HttpContext.Request.Scheme);
                     _emailSender.SendResetPasswordEmail(user.Email, callbackUrl);
-                    return Ok(new { email = user.Email, status = 1, message = "Reset email sent Successful" });
+                    return Ok(new { message = "Reset email sent successfully" });
                 }
 
                 return Ok(new { message = "This user was not found or the email is not confirmed yet." });
