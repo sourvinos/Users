@@ -10,7 +10,6 @@ import * as jwtDecode from 'jwt-decode'
 export class AccountService {
 
     private baseUrlRegister = '/api/account/register'
-    private baseUrlLogin = '/api/account/login'
     private baseUrlToken = '/api/token/auth'
 
     private loginStatus = new BehaviorSubject<boolean>(this.checkLoginStatus())
@@ -37,7 +36,7 @@ export class AccountService {
                     this.loginStatus.next(true)
                     localStorage.setItem('loginStatus', '1')
                     localStorage.setItem('jwt', result.authToken.token)
-                    localStorage.setItem('username', result.authToken.userName)
+                    localStorage.setItem('username', result.authToken.username)
                     localStorage.setItem('displayName', result.authToken.displayName)
                     localStorage.setItem('expiration', result.authToken.expiration)
                     localStorage.setItem('userRole', result.authToken.roles)

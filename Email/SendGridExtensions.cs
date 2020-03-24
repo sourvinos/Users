@@ -6,7 +6,7 @@ namespace Users.Email {
 
         public static IServiceCollection AddSendGridEmailSender(this IServiceCollection services) {
 
-            services.AddTransient<IEmailSender, SendGridEmailSender>();
+            services.AddTransient<IEmailSender, SendGridEmail>();
 
             return services;
 

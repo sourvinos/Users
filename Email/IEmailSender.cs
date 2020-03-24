@@ -1,9 +1,8 @@
-using System.Threading.Tasks;
-
 namespace Users.Email {
 
     public interface IEmailSender {
-        Task<SendEmailResponse> SendEmailAsync(string userEmail, string emailSubject, string message);
+        SendEmailResponse SendRegistrationEmail(string userEmail, string username, string callbackUrl);
+        SendEmailResponse SendResetPasswordEmail(string userEmail, string callbackUrl);
     }
 
 }

@@ -56,7 +56,7 @@ namespace Users.Controllers {
                 var callbackUrl = Url.Action("ConfirmEmail", "Account", new { UserId = user.Id, Code = code }, protocol : HttpContext.Request.Scheme);
 
                 // Send the email
-                await _emailSender.SendEmailAsync(user.Email, "Techhowdy.com - Confirm Your Email", "Please confirm your e-mail by clicking this link: <a href=\"" + callbackUrl + "\">click here</a>");
+                _emailSender.SendRegistrationEmail(user.Email, user.UserName, callbackUrl);
 
                 // MUST return JSON or NOTHING, otherwise Angular will complain with 'invalid characters'
                 // i.e. return Ok()
@@ -147,6 +147,28 @@ namespace Users.Controllers {
                 return new JsonResult(errors);
 
             }
+
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPassword model) {
+
+            if (ModelState.IsValid) {
+
+                var user = await _userManager.FindByEmailAsync(model.Email);
+
+                if (user != null && await _userManager.IsEmailConfirmedAsync(user)) {
+                    string token = await _userManager.GeneratePasswordResetTokenAsync(user);
+                    string callbackUrl = Url.Action("ResetPassword", "Account", new { email = model.Email, token }, protocol : HttpContext.Request.Scheme);
+                    _emailSender.SendResetPasswordEmail(user.Email, callbackUrl);
+                    return Ok(new { email = user.Email, status = 1, message = "Reset email sent Successful" });
+                }
+
+                return Ok(new { message = "This user was not found or the email is not confirmed yet." });
+
+            }
+
+            return BadRequest(new { message = "Password must not be blank" });
 
         }
 
