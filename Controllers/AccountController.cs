@@ -99,12 +99,18 @@ namespace Users.Controllers {
             if (ModelState.IsValid) {
 
                 var user = await userManager.FindByEmailAsync(model.Email);
+
                 if (user != null && await userManager.IsEmailConfirmedAsync(user)) {
+
                     string token = await userManager.GeneratePasswordResetTokenAsync(user);
                     string tokenEncoded = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
-                    string passwordResetLink = Url.Action("ResetPassword", "Account", new { email = model.Email, tokenEncoded }, Request.Scheme);
+                    string baseUrl = $"{this.Request.Scheme}://{this.Request.Host.Value.ToString()}{this.Request.PathBase.Value.ToString()}";
+                    string passwordResetLink = Url.Content($"{baseUrl}/resetPassword/{model.Email}/{tokenEncoded}");
+
                     emailSender.SendResetPasswordEmail(user.Email, passwordResetLink);
+
                     return Ok(new { message = "Reset email sent successfully" });
+
                 }
 
                 return Ok(new { message = "This user was not found or the email is not confirmed yet." });
@@ -121,7 +127,7 @@ namespace Users.Controllers {
                 Email = email,
                 Token = tokenEncoded
             };
-            return View(model);
+            return Ok(model);
         }
 
         [HttpPost("[action]")]
