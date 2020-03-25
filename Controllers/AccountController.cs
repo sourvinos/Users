@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
@@ -117,8 +116,12 @@ namespace Users.Controllers {
         }
 
         [HttpGet("[action]")]
-        public IActionResult ResetPassword() {
-            return View();
+        public IActionResult ResetPassword([FromQuery] string email, [FromQuery] string tokenEncoded) {
+            var model = new ResetPasswordViewModel {
+                Email = email,
+                Token = tokenEncoded
+            };
+            return View(model);
         }
 
         [HttpPost("[action]")]
