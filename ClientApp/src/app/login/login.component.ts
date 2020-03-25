@@ -37,9 +37,6 @@ export class LoginComponent implements OnInit {
     login() {
         const userLogin = this.insertForm.value;
         this.accountService.login(userLogin.username, userLogin.password).subscribe(result => {
-            // const token = (<any>result).authToken.tokenE
-            // console.log(token)
-            // console.log(token.authToken.roles)
             console.log('User logged in successfully')
             this.invalidLogin = false;
             this.router.navigateByUrl(this.returnUrl);
@@ -54,4 +51,7 @@ export class LoginComponent implements OnInit {
         this.router.navigate(['/register']);
     }
 
+    forgotPassword() {
+        this.router.navigate(['/forgotPassword']);
+    }
 }

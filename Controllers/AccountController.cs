@@ -15,7 +15,7 @@ namespace Users.Controllers {
 
     [Route("api/[controller]")]
 
-    public class AccountController : ControllerBase {
+    public class AccountController : Controller {
 
         private readonly UserManager<ApplicationUser> userManager;
         private readonly SignInManager<ApplicationUser> signInManager;
@@ -62,7 +62,6 @@ namespace Users.Controllers {
         }
 
         [HttpGet("[action]")]
-        [AllowAnonymous]
         public async Task<IActionResult> ConfirmEmail(string userId, string code) {
 
             if (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(code)) {
@@ -79,7 +78,7 @@ namespace Users.Controllers {
 
             if (result.Succeeded) {
 
-                return RedirectToAction("EmailConfirmed", "Notifications", new { userId, code });
+                return RedirectToAction("EmailConfirmation", "Notifications", new { userId, code });
 
             } else {
 
@@ -103,9 +102,8 @@ namespace Users.Controllers {
                 var user = await userManager.FindByEmailAsync(model.Email);
                 if (user != null && await userManager.IsEmailConfirmedAsync(user)) {
                     string token = await userManager.GeneratePasswordResetTokenAsync(user);
-                    byte[] tokenGeneratedBytes = Encoding.UTF8.GetBytes(token);
-                    var codeEncoded = WebEncoders.Base64UrlEncode(tokenGeneratedBytes);
-                    string passwordResetLink = Url.Action("ResetPassword", "Account", new { email = model.Email, codeEncoded }, Request.Scheme);
+                    string tokenEncoded = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
+                    string passwordResetLink = Url.Action("ResetPassword", "Account", new { email = model.Email, tokenEncoded }, Request.Scheme);
                     emailSender.SendResetPasswordEmail(user.Email, passwordResetLink);
                     return Ok(new { message = "Reset email sent successfully" });
                 }
@@ -118,8 +116,12 @@ namespace Users.Controllers {
 
         }
 
+        [HttpGet("[action]")]
+        public IActionResult ResetPassword() {
+            return View();
+        }
+
         [HttpPost("[action]")]
-        [AllowAnonymous]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordViewModel model) {
 
             if (ModelState.IsValid) {
@@ -127,11 +129,10 @@ namespace Users.Controllers {
                 var user = await userManager.FindByEmailAsync(model.Email);
 
                 if (user != null) {
-                    var codeDecodedBytes = WebEncoders.Base64UrlDecode(model.Token);
-                    var codeDecoded = Encoding.UTF8.GetString(codeDecodedBytes);
-                    var result = await userManager.ResetPasswordAsync(user, codeDecoded, model.Password);
+                    var tokenDecoded = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(model.Token));
+                    var result = await userManager.ResetPasswordAsync(user, tokenDecoded, model.Password);
                     if (result.Succeeded) {
-                        return RedirectToAction("ResetPasswordConfirmed", "Notifications");
+                        return RedirectToAction("ResetPasswordConfirmation", "Notifications");
                     }
                     List<string> errors = new List<string>();
 

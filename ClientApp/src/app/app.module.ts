@@ -13,6 +13,7 @@ import { ProductListComponent } from './products/ui/product-list.component';
 import { ProductUpdateComponent } from './products/ui/product-update.component';
 import { RegisterComponent } from './register/register.component';
 import { HttpInterceptor } from './helpers/http-interceptor';
+import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 
 @NgModule({
     declarations: [
@@ -21,6 +22,7 @@ import { HttpInterceptor } from './helpers/http-interceptor';
         HomeComponent,
         RegisterComponent,
         LoginComponent,
+        ForgotPasswordComponent,
         ProductListComponent,
         ProductDetailsComponent,
         ProductUpdateComponent,
@@ -35,6 +37,7 @@ import { HttpInterceptor } from './helpers/http-interceptor';
             { path: 'home', redirectTo: '/' },
             { path: 'register', component: RegisterComponent },
             { path: 'login', component: LoginComponent },
+            { path: 'forgotPassword', component: ForgotPasswordComponent },
             { path: 'products', component: ProductListComponent, canActivate: [AuthGuardService] },
             { path: 'products/:id', component: ProductDetailsComponent, canActivate: [AuthGuardService] },
             { path: '**', redirectTo: '/' }

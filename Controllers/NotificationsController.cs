@@ -4,7 +4,7 @@ namespace Users.Controllers {
 
     public class NotificationsController : Controller {
 
-        public IActionResult EmailConfirmed(string userId, string code) {
+        public IActionResult EmailConfirmation(string userId, string code) {
 
             if (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(code)) {
                 return Redirect("/login");
@@ -14,7 +14,7 @@ namespace Users.Controllers {
 
         }
 
-        public IActionResult ResetPasswordConfirmed(string userId, string code) {
+        public IActionResult ResetPasswordConfirmation(string userId, string code) {
 
             return View();
 
