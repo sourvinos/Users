@@ -119,7 +119,7 @@ namespace Users.Controllers {
                     expiration = newtoken.ValidTo,
                     refresh_token = refreshToken,
                     roles = roles.FirstOrDefault(),
-                    userName = user.UserName,
+                    username = user.UserName,
                     displayName = user.DisplayName
             };
         }
@@ -143,5 +143,4 @@ namespace Users.Controllers {
         }
 
     }
-
 }

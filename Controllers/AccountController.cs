@@ -1,15 +1,12 @@
 using System;
 using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 using Users.Email;
 using Users.Helpers;
 using Users.Models;
@@ -48,12 +45,10 @@ namespace Users.Controllers {
             if (result.Succeeded) {
 
                 await userManager.AddToRoleAsync(user, "Customer");
-                string code = await userManager.GenerateEmailConfirmationTokenAsync(user);
-                string callbackUrl = Url.Action("ConfirmEmail", "Account", new { UserId = user.Id, Code = code }, protocol : HttpContext.Request.Scheme);
-
+                var code = await userManager.GenerateEmailConfirmationTokenAsync(user);
+                var callbackUrl = Url.Action("ConfirmEmail", "Account", new { UserId = user.Id, Code = code }, protocol : HttpContext.Request.Scheme);
                 emailSender.SendRegistrationEmail(user.Email, user.UserName, callbackUrl);
-
-                return Ok(new { username = user.UserName, email = user.Email, status = 1, message = "Registration Successful" });
+                return Ok(new { message = "Registration Successful, confirm your email address" });
 
             }
 
@@ -63,49 +58,6 @@ namespace Users.Controllers {
             }
 
             return BadRequest(new JsonResult(errorList));
-
-        }
-
-        [HttpPost("[action]")]
-        public async Task<IActionResult> Login([FromBody] LoginViewModel formData) {
-
-            var user = await userManager.FindByNameAsync(formData.Username);
-            var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(appSettings.Secret));
-            var tokenExpiryTime = Convert.ToDouble(appSettings.ExpireTime);
-
-            if (user != null && await userManager.CheckPasswordAsync(user, formData.Password)) {
-
-                if (!await userManager.IsEmailConfirmedAsync(user)) {
-                    ModelState.AddModelError(string.Empty, "User Has not Confirmed Email.");
-                    // This will be caught by the login method in the front-end
-                    return Unauthorized(new { LoginError = "We sent you an Confirmation Email. Please Confirm Your Registration With Techhowdy.com To Log in." });
-                }
-
-                var roles = await userManager.GetRolesAsync(user);
-                var tokenHandler = new JwtSecurityTokenHandler();
-                var tokenDescriptor = new SecurityTokenDescriptor {
-                    Subject = new ClaimsIdentity(new Claim[] {
-                    new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
-                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                    new Claim(ClaimTypes.NameIdentifier, user.Id),
-                    new Claim(ClaimTypes.Role, roles.FirstOrDefault()),
-                    new Claim("LoggedOn", DateTime.Now.ToString())
-                    }),
-                    SigningCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature),
-                    Issuer = appSettings.Site,
-                    Audience = appSettings.Audience,
-                    Expires = DateTime.UtcNow.AddMinutes(tokenExpiryTime),
-                };
-
-                var token = tokenHandler.CreateToken(tokenDescriptor);
-
-                return Ok(new { token = tokenHandler.WriteToken(token), expiration = token.ValidTo, username = user.UserName, role = roles.FirstOrDefault() });
-
-            }
-
-            ModelState.AddModelError("", "Invalid credentials");
-
-            return Unauthorized(new { LoginError = "Invalid credentials" });
 
         }
 
@@ -149,12 +101,13 @@ namespace Users.Controllers {
             if (ModelState.IsValid) {
 
                 var user = await userManager.FindByEmailAsync(model.Email);
-
                 if (user != null && await userManager.IsEmailConfirmedAsync(user)) {
                     string token = await userManager.GeneratePasswordResetTokenAsync(user);
-                    string callbackUrl = Url.Action("ResetPassword", "Account", new { email = model.Email, token }, protocol : HttpContext.Request.Scheme);
-                    emailSender.SendResetPasswordEmail(user.Email, callbackUrl);
-                    return Ok(new { email = user.Email, status = 1, message = "Reset email sent Successful" });
+                    byte[] tokenGeneratedBytes = Encoding.UTF8.GetBytes(token);
+                    var codeEncoded = WebEncoders.Base64UrlEncode(tokenGeneratedBytes);
+                    string passwordResetLink = Url.Action("ResetPassword", "Account", new { email = model.Email, codeEncoded }, Request.Scheme);
+                    emailSender.SendResetPasswordEmail(user.Email, passwordResetLink);
+                    return Ok(new { message = "Reset email sent successfully" });
                 }
 
                 return Ok(new { message = "This user was not found or the email is not confirmed yet." });
@@ -163,6 +116,35 @@ namespace Users.Controllers {
 
             return BadRequest(new { message = "Password must not be blank" });
 
+        }
+
+        [HttpPost("[action]")]
+        [AllowAnonymous]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordViewModel model) {
+
+            if (ModelState.IsValid) {
+
+                var user = await userManager.FindByEmailAsync(model.Email);
+
+                if (user != null) {
+                    var codeDecodedBytes = WebEncoders.Base64UrlDecode(model.Token);
+                    var codeDecoded = Encoding.UTF8.GetString(codeDecodedBytes);
+                    var result = await userManager.ResetPasswordAsync(user, codeDecoded, model.Password);
+                    if (result.Succeeded) {
+                        return RedirectToAction("ResetPasswordConfirmed", "Notifications");
+                    }
+                    List<string> errors = new List<string>();
+
+                    foreach (var error in result.Errors) {
+                        errors.Add(error.Description);
+                    }
+
+                    return new JsonResult(errors);
+                }
+
+            }
+
+            return BadRequest();
         }
 
     }

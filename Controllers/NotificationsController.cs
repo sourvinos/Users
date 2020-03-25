@@ -14,6 +14,12 @@ namespace Users.Controllers {
 
         }
 
+        public IActionResult ResetPasswordConfirmed(string userId, string code) {
+
+            return View();
+
+        }
+
     }
 
 }

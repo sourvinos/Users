@@ -14,7 +14,7 @@ export class LoginComponent implements OnInit {
     username: FormControl;
     password: FormControl;
     returnUrl: string;
-    errorMessage = 'Oops';
+    errorMessage: string;
     invalidLogin: boolean;
 
     constructor(
@@ -25,8 +25,8 @@ export class LoginComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.username = new FormControl('', [Validators.required]);
-        this.password = new FormControl('', [Validators.required, Validators.maxLength(50)]);
+        this.username = new FormControl('sourvinos', [Validators.required]);
+        this.password = new FormControl('12345', [Validators.required, Validators.maxLength(50)]);
         this.returnUrl = this.activatedRoute.snapshot.queryParams['returnUrl'] || '/home';
         this.insertForm = this.fb.group({
             'username': this.username,
@@ -37,12 +37,16 @@ export class LoginComponent implements OnInit {
     login() {
         const userLogin = this.insertForm.value;
         this.accountService.login(userLogin.username, userLogin.password).subscribe(result => {
+            // const token = (<any>result).authToken.tokenE
+            // console.log(token)
+            // console.log(token.authToken.roles)
+            console.log('User logged in successfully')
             this.invalidLogin = false;
             this.router.navigateByUrl(this.returnUrl);
         }, error => {
             this.invalidLogin = true;
-            this.errorMessage = error.error.loginError;
-            console.log(error);
+            this.errorMessage = error.error;
+            console.log(this.errorMessage);
         });
     }
 
