@@ -1,11 +1,9 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Options;
 using Users.Email;
@@ -53,7 +51,7 @@ namespace Users.Controllers {
 
                     emailSender.SendRegistrationEmail(user.Email, user.UserName, callbackUrl);
 
-                    return Ok(new { response = user });
+                    return Ok(new { response = "User created successfully" });
 
                 } else {
 
@@ -104,15 +102,15 @@ namespace Users.Controllers {
 
                     emailSender.SendResetPasswordEmail(user.Email, passwordResetLink);
 
-                    return Ok(new { response = "Reset email sent successfully" });
+                    return Ok(new { response = "A reset email was sent successfully" });
 
                 }
 
-                return BadRequest(new { response = "This user was not found or the email is not confirmed yet." });
+                return Ok(new { response = "If you have an account with us, a reset email was sent successfully" });
 
             }
 
-            return BadRequest(new { response = "Password must not be blank" });
+            return BadRequest(new { response = "Email must not be blank" });
 
         }
 
