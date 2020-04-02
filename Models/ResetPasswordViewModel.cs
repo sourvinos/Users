@@ -4,12 +4,12 @@ namespace Users.Models {
 
     public class ResetPasswordViewModel {
 
-        [Required]
         [EmailAddress]
+        [Required(ErrorMessage = "Email is required")]
         public string Email { get; set; }
 
-        [Required]
         [DataType(DataType.Password)]
+        [Required(ErrorMessage = "Password required")]
         public string Password { get; set; }
 
         [DataType(DataType.Password)]
@@ -17,6 +17,7 @@ namespace Users.Models {
         [Compare("Password", ErrorMessage = "Passwords do not match")]
         public string ConfirmPassword { get; set; }
 
+        [Required(ErrorMessage = "Token is required")]
         public string Token { get; set; }
 
     }

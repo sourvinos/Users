@@ -16,25 +16,24 @@ export class HttpInterceptor implements HttpInterceptor {
     constructor(private accountService: AccountService, private http: HttpClient) { }
 
     intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-
-        return next.handle(this.attachTokenToRequest(request)).pipe(
-            tap((event: HttpEvent<any>) => {
-                if (event instanceof HttpResponse) {
-                    console.log('Success')
-                }
-            }), catchError((err): Observable<any> => {
-                if (err instanceof HttpErrorResponse) {
-                    switch ((<HttpErrorResponse>err).status) {
-                        case 401:
-                            console.log('Token has expired. Attempting to refresh...')
-                            return this.handleHttpErrorResponse(request, next)
-                        case 400:
-                            return <any>this.accountService.logout()
+        return next.handle(this.attachTokenToRequest(request)).pipe(tap((event: HttpEvent<any>) => {
+            if (event instanceof HttpResponse) { }
+        }),
+            catchError((err): Observable<any> => {
+                if (this.isUserLoggedIn()) {
+                    if (err instanceof HttpErrorResponse) {
+                        switch ((<HttpErrorResponse>err).status) {
+                            case 400:
+                                return <any>this.accountService.logout()
+                            case 401:
+                                return this.handleHttpErrorResponse(request, next)
+                        }
+                    } else {
+                        return throwError(this.handleError)
                     }
-                } else {
-                    return throwError(err)
                 }
-            }))
+            })
+        )
     }
 
     private handleHttpErrorResponse(request: HttpRequest<any>, next: HttpHandler) {
@@ -92,6 +91,10 @@ export class HttpInterceptor implements HttpInterceptor {
             errorMsg = `Backend returned code ${errorResponse.status}, body was: ${errorResponse.error}`
         }
         return throwError(errorMsg)
+    }
+
+    private isUserLoggedIn() {
+        return localStorage.getItem('loginStatus') === '1'
     }
 
 }

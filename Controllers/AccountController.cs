@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Options;
 using Users.Email;
@@ -16,10 +18,10 @@ namespace Users.Controllers {
 
     public class AccountController : Controller {
 
-        private readonly UserManager<ApplicationUser> userManager;
-        private readonly SignInManager<ApplicationUser> signInManager;
         private readonly AppSettings appSettings;
         private readonly IEmailSender emailSender;
+        private readonly SignInManager<ApplicationUser> signInManager;
+        private readonly UserManager<ApplicationUser> userManager;
 
         public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IEmailSender emailSender, IOptions<AppSettings> appSettings) {
             this.userManager = userManager;
@@ -31,65 +33,58 @@ namespace Users.Controllers {
         [HttpPost("[action]")]
         public async Task<IActionResult> Register([FromBody] RegisterViewModel formData) {
 
-            List<string> errorList = new List<string>();
+            if (ModelState.IsValid) {
 
-            var user = new ApplicationUser {
-                Email = formData.Email,
-                UserName = formData.Username,
-                SecurityStamp = Guid.NewGuid().ToString()
-            };
+                var user = new ApplicationUser {
+                    Email = formData.Email,
+                    DisplayName = formData.Displayname,
+                    UserName = formData.Username,
+                    SecurityStamp = Guid.NewGuid().ToString()
+                };
 
-            var result = await userManager.CreateAsync(user, formData.Password);
+                var result = await userManager.CreateAsync(user, formData.Password);
 
-            if (result.Succeeded) {
+                if (result.Succeeded) {
 
-                await userManager.AddToRoleAsync(user, "Customer");
-                var code = await userManager.GenerateEmailConfirmationTokenAsync(user);
-                var callbackUrl = Url.Action("ConfirmEmail", "Account", new { UserId = user.Id, Code = code }, protocol : HttpContext.Request.Scheme);
-                emailSender.SendRegistrationEmail(user.Email, user.UserName, callbackUrl);
-                return Ok(new { message = "Registration Successful, confirm your email address" });
+                    await userManager.AddToRoleAsync(user, "Customer");
+
+                    string token = await userManager.GenerateEmailConfirmationTokenAsync(user);
+                    string callbackUrl = Url.Action("ConfirmEmail", "Account", new { UserId = user.Id, Token = token }, protocol : HttpContext.Request.Scheme);
+
+                    emailSender.SendRegistrationEmail(user.Email, user.UserName, callbackUrl);
+
+                    return Ok(new { response = user });
+
+                } else {
+
+                    return BadRequest(new { response = result.Errors.Select(x => x.Description) });
+
+                }
 
             }
 
-            foreach (var error in result.Errors) {
-                ModelState.AddModelError("", error.Description);
-                errorList.Add(error.Description);
-            }
-
-            return BadRequest(new JsonResult(errorList));
+            return BadRequest(new { response = ModelState.Values.SelectMany(x => x.Errors).Select(x => x.ErrorMessage) });
 
         }
 
         [HttpGet("[action]")]
-        public async Task<IActionResult> ConfirmEmail(string userId, string code) {
-
-            if (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(code)) {
-                ModelState.AddModelError("", "User Id and code are required");
-                return BadRequest(ModelState);
-            }
+        public async Task<IActionResult> ConfirmEmail(string userId, string token) {
 
             var user = await userManager.FindByIdAsync(userId);
 
-            if (user == null) { return new JsonResult("Error"); }
+            if (user == null) { return BadRequest(new { response = "User not found" }); }
+
             if (user.EmailConfirmed) { return Redirect("/login"); }
 
-            var result = await userManager.ConfirmEmailAsync(user, code);
+            var result = await userManager.ConfirmEmailAsync(user, token);
 
             if (result.Succeeded) {
 
-                return RedirectToAction("EmailConfirmation", "Notifications", new { userId, code });
-
-            } else {
-
-                List<string> errors = new List<string>();
-
-                foreach (var error in result.Errors) {
-                    errors.Add(error.ToString());
-                }
-
-                return new JsonResult(errors);
+                return RedirectToAction("EmailConfirmation", "Notifications", new { userId, token });
 
             }
+
+            return BadRequest(new { response = result.Errors.Select(x => x.Description) });
 
         }
 
@@ -109,25 +104,30 @@ namespace Users.Controllers {
 
                     emailSender.SendResetPasswordEmail(user.Email, passwordResetLink);
 
-                    return Ok(new { message = "Reset email sent successfully" });
+                    return Ok(new { response = "Reset email sent successfully" });
 
                 }
 
-                return Ok(new { message = "This user was not found or the email is not confirmed yet." });
+                return BadRequest(new { response = "This user was not found or the email is not confirmed yet." });
 
             }
 
-            return BadRequest(new { message = "Password must not be blank" });
+            return BadRequest(new { response = "Password must not be blank" });
 
         }
 
         [HttpGet("[action]")]
         public IActionResult ResetPassword([FromQuery] string email, [FromQuery] string tokenEncoded) {
+
             var model = new ResetPasswordViewModel {
+
                 Email = email,
                 Token = tokenEncoded
+
             };
-            return Ok(model);
+
+            return Ok(new { response = model });
+
         }
 
         [HttpPost("[action]")]
@@ -137,24 +137,23 @@ namespace Users.Controllers {
 
                 var user = await userManager.FindByEmailAsync(model.Email);
 
-                if (user != null) {
-                    var tokenDecoded = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(model.Token));
-                    var result = await userManager.ResetPasswordAsync(user, tokenDecoded, model.Password);
-                    if (result.Succeeded) {
-                        return RedirectToAction("ResetPasswordConfirmation", "Notifications");
-                    }
-                    List<string> errors = new List<string>();
+                if (user == null) { return BadRequest(new { response = "User not found" }); }
 
-                    foreach (var error in result.Errors) {
-                        errors.Add(error.Description);
-                    }
+                var tokenDecoded = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(model.Token));
+                var result = await userManager.ResetPasswordAsync(user, tokenDecoded, model.Password);
 
-                    return new JsonResult(errors);
+                if (result.Succeeded) {
+
+                    return RedirectToAction("ResetPasswordConfirmation", "Notifications");
+
                 }
+
+                return BadRequest(new { response = result.Errors.Select(x => x.Description) });
 
             }
 
-            return BadRequest();
+            return BadRequest(new { response = ModelState.Values.SelectMany(x => x.Errors).Select(x => x.ErrorMessage) });
+
         }
 
     }

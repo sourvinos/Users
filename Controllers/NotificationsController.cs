@@ -4,10 +4,10 @@ namespace Users.Controllers {
 
     public class NotificationsController : Controller {
 
-        public IActionResult EmailConfirmation(string userId, string code) {
+        public IActionResult EmailConfirmation(string userId, string token) {
 
-            if (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(code)) {
-                return Redirect("/login");
+            if (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(token)) {
+                return RedirectToAction("Login", "Account");
             }
 
             return View();

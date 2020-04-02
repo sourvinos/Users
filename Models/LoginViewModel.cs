@@ -5,7 +5,6 @@ namespace Users.Models {
     public class LoginViewModel {
 
         [Required]
-        [Display(Name = "User name")]
         public string Username { get; set; }
 
         [Required]
