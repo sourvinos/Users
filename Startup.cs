@@ -44,6 +44,7 @@ namespace Users {
                 options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
                 options.Lockout.MaxFailedAccessAttempts = 5;
                 options.Lockout.AllowedForNewUsers = true;
+                options.ClaimsIdentity.UserIdClaimType = "UserID";
             }).AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
 
             var appSettingsSection = Configuration.GetSection("AppSettings");

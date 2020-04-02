@@ -102,15 +102,15 @@ namespace Users.Controllers {
 
                     emailSender.SendResetPasswordEmail(user.Email, passwordResetLink);
 
-                    return Ok(new { response = "A reset email was sent successfully" });
+                    return Ok(new { response = "A reset email was sent" });
 
                 }
 
-                return Ok(new { response = "If you have an account with us, a reset email was sent successfully" });
+                return Ok(new { response = "If you have an activated account with us, a reset email was sent" });
 
             }
 
-            return BadRequest(new { response = "Email must not be blank" });
+            return BadRequest(new { response = ModelState.Values.SelectMany(x => x.Errors).Select(x => x.ErrorMessage) });
 
         }
 
@@ -148,6 +148,32 @@ namespace Users.Controllers {
 
                 return BadRequest(new { response = result.Errors.Select(x => x.Description) });
 
+            }
+
+            return BadRequest(new { response = ModelState.Values.SelectMany(x => x.Errors).Select(x => x.ErrorMessage) });
+
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordViewModel vm) {
+
+            if (ModelState.IsValid) {
+
+                var user = await userManager.GetUserAsync(HttpContext.User);
+
+                if (user == null) { return BadRequest(new { response = "User not found" }); }
+
+                var result = await userManager.ChangePasswordAsync(user, vm.CurrentPassword, vm.NewPassword);
+
+                if (result.Succeeded) {
+
+                    await signInManager.RefreshSignInAsync(user);
+
+                    return Ok();
+
+                }
+
+                return StatusCode(406);
             }
 
             return BadRequest(new { response = ModelState.Values.SelectMany(x => x.Errors).Select(x => x.ErrorMessage) });
