@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 
 namespace Users.Models {
+
     public class ChangePasswordViewModel {
 
         [DataType(DataType.Password)]

@@ -102,11 +102,11 @@ namespace Users.Controllers {
 
                     emailSender.SendResetPasswordEmail(user.Email, passwordResetLink);
 
-                    return Ok(new { response = "A reset email was sent" });
+                    return Ok(new { response = "An email was sent to your account" });
 
                 }
 
-                return Ok(new { response = "If you have an activated account with us, a reset email was sent" });
+                return Ok(new { response = "If you have an activated account with us, an email was sent to your account" });
 
             }
 
@@ -159,9 +159,9 @@ namespace Users.Controllers {
 
             if (ModelState.IsValid) {
 
-                var user = await userManager.GetUserAsync(HttpContext.User);
+                var user = await userManager.GetUserAsync(User);
 
-                if (user == null) { return BadRequest(new { response = "User not found" }); }
+                if (user == null) { return Unauthorized(new { Response = "Authentication failed" }); }
 
                 var result = await userManager.ChangePasswordAsync(user, vm.CurrentPassword, vm.NewPassword);
 
@@ -169,11 +169,12 @@ namespace Users.Controllers {
 
                     await signInManager.RefreshSignInAsync(user);
 
-                    return Ok();
+                    return Ok(new { Response = "Password changed successfully" });
 
                 }
 
-                return StatusCode(406);
+                return BadRequest(new { response = result.Errors.Select(x => x.Description) });
+
             }
 
             return BadRequest(new { response = ModelState.Values.SelectMany(x => x.Errors).Select(x => x.ErrorMessage) });
