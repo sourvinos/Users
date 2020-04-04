@@ -6,7 +6,6 @@ namespace Users.Models {
 
         [DataType(DataType.Password)]
         [Required(ErrorMessage = "Current password is required")]
-        [MaxLength(128, ErrorMessage = "Current password can not be longer than 128 characters")]
         public string CurrentPassword { get; set; }
 
         [DataType(DataType.Password)]

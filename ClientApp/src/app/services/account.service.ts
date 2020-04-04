@@ -19,27 +19,17 @@ export class AccountService {
 
     constructor(private http: HttpClient, private router: Router) { }
 
-    register(username: string, password: string, email: string) {
-        return this.http.post<any>(this.baseUrlRegister, { username, password, email }).pipe(map(result => {
-            return result
-        }, (error: any) => {
-            return error
-        }))
+    register(username: string, displayName: string, password: string, email: string) {
+        return this.http.post<any>(this.baseUrlRegister, { username, displayName, password, email })
     }
 
     login(username: string, password: string) {
         const grantType = 'password'
-        return this.http.post<any>(this.baseUrlToken, { username, password, grantType }).pipe(map(result => {
-            if (result && result.authToken.token) {
-                this.setLoginStatus(true)
-                localStorage.setItem('loginStatus', '1')
-                localStorage.setItem('jwt', result.authToken.token)
-                localStorage.setItem('username', result.authToken.username)
-                localStorage.setItem('expiration', result.authToken.expiration)
-                localStorage.setItem('userRole', result.authToken.roles)
-                localStorage.setItem('refreshToken', result.authToken.refresh_token)
-                this.setUserData()
-            }
+        return this.http.post<any>(this.baseUrlToken, { username, password, grantType }).pipe(map(response => {
+            this.setLoginStatus(true)
+            this.setLocalStorage(response)
+            this.setUserData()
+            // return response
         }))
     }
 
@@ -80,8 +70,8 @@ export class AccountService {
                     localStorage.setItem('expiration', result.authToken.expiration)
                     localStorage.setItem('userRole', result.authToken.roles)
                     localStorage.setItem('refreshToken', result.authToken.refresh_token)
+                    return result
                 }
-                return <any>result
             })
         )
     }
@@ -95,14 +85,18 @@ export class AccountService {
         localStorage.removeItem('displayName')
         localStorage.removeItem('refreshToken')
     }
-
-    private setLocalStorage(result: { token: string; username: string; expiration: string; role: string }) {
-
+    private setLocalStorage(response: any) {
+        localStorage.setItem('loginStatus', '1')
+        localStorage.setItem('jwt', response.response.token)
+        localStorage.setItem('username', response.response.username)
+        localStorage.setItem('expiration', response.response.expiration)
+        localStorage.setItem('userRole', response.response.roles)
+        localStorage.setItem('refreshToken', response.response.refresh_token)
     }
 
     private setUserData() {
-        this.username.next(localStorage.getItem('username'))
-        this.userRole.next(localStorage.getItem('userRole'))
+        this.username.next(localStorage.getItem('username'));
+        this.userRole.next(localStorage.getItem('userRole'));
     }
 
     private navigateHome() {

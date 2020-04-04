@@ -36,13 +36,12 @@ export class LoginComponent implements OnInit {
 
     login() {
         const userLogin = this.insertForm.value;
-        this.accountService.login(userLogin.username, userLogin.password).subscribe(result => {
-            console.log('User logged in successfully')
+        this.accountService.login(userLogin.username, userLogin.password).subscribe(() => {
             this.invalidLogin = false;
             this.router.navigateByUrl(this.returnUrl);
         }, error => {
             this.invalidLogin = true;
-            this.errorMessage = error.error;
+            this.errorMessage = error.error.response;
             console.log(this.errorMessage);
         });
     }

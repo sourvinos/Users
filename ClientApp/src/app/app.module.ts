@@ -46,7 +46,7 @@ import { ResetPasswordComponent } from './reset-password/reset-password.componen
             { path: '**', redirectTo: '/' }
         ])
     ],
-    providers: [AuthGuardService, { provide: HTTP_INTERCEPTORS, useClass: HttpInterceptor, multi: true }],
+    // providers: [AuthGuardService, { provide: HTTP_INTERCEPTORS, useClass: HttpInterceptor, multi: true }],
     bootstrap: [AppComponent]
 })
 
