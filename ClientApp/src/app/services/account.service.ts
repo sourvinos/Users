@@ -19,8 +19,8 @@ export class AccountService {
 
     constructor(private http: HttpClient, private router: Router) { }
 
-    register(username: string, displayName: string, password: string, email: string) {
-        return this.http.post<any>(this.baseUrlRegister, { username, displayName, password, email })
+    register(username: string, displayName: string, password: string, confirmPassword: string, email: string) {
+        return this.http.post<any>(this.baseUrlRegister, { username, displayName, password, confirmPassword, email })
     }
 
     login(username: string, password: string) {
@@ -29,7 +29,6 @@ export class AccountService {
             this.setLoginStatus(true)
             this.setLocalStorage(response)
             this.setUserData()
-            // return response
         }))
     }
 

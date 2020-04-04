@@ -1,4 +1,4 @@
-import { Component, ViewChild, TemplateRef, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { AccountService } from '../services/account.service';
 import { Router } from '@angular/router';
@@ -38,12 +38,13 @@ export class RegisterComponent implements OnInit {
 
     register() {
         const userRegister = this.insertForm.value;
-        this.accountService.register(userRegister.username, userRegister.displayName, userRegister.password, userRegister.email).subscribe((result) => {
+        this.accountService.register(userRegister.username, userRegister.displayName, userRegister.password, userRegister.confirmPassword, userRegister.email).subscribe((result) => {
             console.log(result)
             this.invalidRegister = false
             this.router.navigateByUrl('/login');
         }, error => {
             this.invalidRegister = true
+            console.log(this.invalidRegister);
             error.error.response.forEach((element: string) => {
                 this.errorList.push(element);
             });
