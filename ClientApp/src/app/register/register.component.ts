@@ -1,8 +1,9 @@
+import { FieldValidators } from './username-validators';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AccountService } from '../services/account.service';
-import { PasswordValidator } from './password-validator';
+import { CrossFieldValidators } from './crossfield-validators';
 
 @Component({
     selector: 'app-register',
@@ -23,12 +24,14 @@ export class RegisterComponent implements OnInit {
 
     initForm() {
         this.form = this.formBuilder.group({
-            username: ['', [Validators.required, Validators.maxLength(32)]],
+            username: ['', [Validators.required, Validators.maxLength(32), FieldValidators.cannotContainSpace]],
             displayName: ['', [Validators.required, Validators.maxLength(32)]],
-            email: ['', [Validators.required, Validators.maxLength(32), Validators.pattern(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)]],
-            password: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(128)]],
-            confirmPassword: ['', [Validators.required]],
-        }, { validator: PasswordValidator })
+            email: ['', [Validators.required, Validators.maxLength(32), Validators.email]],
+            passwords: this.formBuilder.group({
+                password: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(128)]],
+                confirmPassword: ['', [Validators.required]],
+            }, { validator: CrossFieldValidators.cannotBeDifferent })
+        })
     }
 
     register() {
@@ -62,11 +65,15 @@ export class RegisterComponent implements OnInit {
     }
 
     get Password() {
-        return this.form.get('password');
+        return this.form.get('passwords.password');
     }
 
     get ConfirmPassword() {
-        return this.form.get('confirmPassword')
+        return this.form.get('passwords.confirmPassword')
+    }
+
+    get Passwords() {
+        return this.form.get('passwords')
     }
 
     get Email() {
