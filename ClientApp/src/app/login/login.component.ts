@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AccountService } from './../services/account.service';
 
@@ -10,39 +10,39 @@ import { AccountService } from './../services/account.service';
 
 export class LoginComponent implements OnInit {
 
-    insertForm: FormGroup;
-    username: FormControl;
-    password: FormControl;
+    form: FormGroup;
     returnUrl: string;
-    errorMessage: string;
+    errorList = '';
     invalidLogin: boolean;
 
-    constructor(
-        private accountService: AccountService,
-        private router: Router,
-        private activatedRoute: ActivatedRoute,
-        private fb: FormBuilder) {
-    }
+    constructor(private formBuilder: FormBuilder, private accountService: AccountService, private router: Router, private activatedRoute: ActivatedRoute) { }
 
     ngOnInit() {
-        this.username = new FormControl('sourvinos', [Validators.required]);
-        this.password = new FormControl('12345', [Validators.required, Validators.maxLength(50)]);
+        this.initForm()
         this.returnUrl = this.activatedRoute.snapshot.queryParams['returnUrl'] || '/home';
-        this.insertForm = this.fb.group({
-            'username': this.username,
-            'password': this.password
-        });
+    }
+
+    initForm() {
+        this.form = this.formBuilder.group({
+            username: ['', [Validators.required]],
+            password: ['', [Validators.required]]
+        })
     }
 
     login() {
-        const userLogin = this.insertForm.value;
-        this.accountService.login(userLogin.username, userLogin.password).subscribe(() => {
+        if (!this.form.valid) {
+            return
+        }
+        const form = this.form.value;
+        this.accountService.login(form.username, form.password).subscribe(() => {
             this.invalidLogin = false;
             this.router.navigateByUrl(this.returnUrl);
         }, error => {
             this.invalidLogin = true;
-            alert(error.error.response)
-            console.log(this.errorMessage);
+            this.errorList = ''
+            this.errorList = error.error.response
+            console.log(this.errorList)
+            alert(this.errorList)
         });
     }
 
@@ -53,4 +53,13 @@ export class LoginComponent implements OnInit {
     forgotPassword() {
         this.router.navigate(['/forgotPassword']);
     }
+
+    get Username() {
+        return this.form.get('username');
+    }
+
+    get Password() {
+        return this.form.get('password');
+    }
+
 }

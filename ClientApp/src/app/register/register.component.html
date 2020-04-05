@@ -1,6 +1,5 @@
 <h2 class="text-center">Register</h2>
-<form class="login-form" method="post" [formGroup]="form">
-    <span class="text-warning">{{ form.value | json }} {{ form.valid }}</span>
+<form [formGroup]="form">
     <div class="form-group">
         <label for="username">Username</label>
         <input id="username" formControlName="username" type="text" class="form-control" placeholder="" required>
@@ -26,6 +25,7 @@
                 <span *ngIf="Password.errors?.required">This field is required</span>
                 <span *ngIf="Password.errors?.minlength">This field must be at least 10 characters long</span>
                 <span *ngIf="Password.errors?.maxlength">This field can be up to 32 characters long</span>
+                <span *ngIf="Password.errors?.cannotContainSpace">Spaces are not allowed</span>
             </div>
         </div>
         <div class="form-group">
@@ -46,7 +46,10 @@
             <span *ngIf="!Email.errors?.required && !Email.errors?.isEmail">This field is invalid</span>
         </div>
     </div>
+    <br />
     <div class="form-group">
         <input type="button" id="register" (click)="register()" class="btn btn-login btn-info btn-block" value="Register" />
     </div>
+    <br />
+    <span class="text-warning">{{ form.value | json }} {{ form.valid }}</span>
 </form>

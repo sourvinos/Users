@@ -1,9 +1,9 @@
-import { FieldValidators } from './username-validators';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AccountService } from '../services/account.service';
 import { CrossFieldValidators } from './crossfield-validators';
+import { FieldValidators } from './username-validators';
 
 @Component({
     selector: 'app-register',
@@ -28,7 +28,7 @@ export class RegisterComponent implements OnInit {
             displayName: ['', [Validators.required, Validators.maxLength(32)]],
             email: ['', [Validators.required, Validators.maxLength(32), Validators.email]],
             passwords: this.formBuilder.group({
-                password: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(128)]],
+                password: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(128), FieldValidators.cannotContainSpace]],
                 confirmPassword: ['', [Validators.required]],
             }, { validator: CrossFieldValidators.cannotBeDifferent })
         })
@@ -36,11 +36,10 @@ export class RegisterComponent implements OnInit {
 
     register() {
         if (!this.form.valid) {
-            console.log('Invalid form')
             return
         }
         const form = this.form.value;
-        this.accountService.register(form.username, form.displayName, form.password, form.confirmPassword, form.email).subscribe(() => {
+        this.accountService.register(form.username, form.displayName, form.passwords.password, form.passwords.confirmPassword, form.email).subscribe(() => {
             alert(`An email was sent to ${form.email} for account verification`)
             this.invalidRegister = false
             this.router.navigateByUrl('/login');
