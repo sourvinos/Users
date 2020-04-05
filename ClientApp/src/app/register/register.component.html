@@ -1,57 +1,54 @@
-<section class="register-block">
-    <div class="container signLog">
-        <div class="row">
-            <div class="col-md-4 register-sec">
-                <h2 class="text-center">Register</h2>
-                <form class="login-form" method="post" [formGroup]="insertForm">
-                    <div class="form-group">
-                        <label for="username" class="text-uppercase">Username</label>
-                        <input id="username" formControlName="username" type="text" class="form-control" placeholder="" required>
-                        <div *ngIf="Username.touched && Username.errors" class="text-danger">
-                            <span *ngIf="Username.hasError('required')">Username is required.</span>
-                            <span *ngIf="Username.hasError('maxLength')">Username length must be up to 10 characters long.</span>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="displayName" class="text-uppercase">Display name</label>
-                        <input id="displayName" formControlName="displayName" type="text" class="form-control" placeholder="" required>
-                        <div *ngIf="displayName.touched && displayName.errors" class="text-danger">
-                            <span *ngIf="displayName.hasError('required')">Display name is required.</span>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="password" class="text-uppercase">Password</label>
-                        <input id="password" formControlName="password" type="password" class="form-control" placeholder="" required>
-                        <div *ngIf="Password.touched && Password.errors" class="text-danger">
-                            <span *ngIf="Password.hasError('required')">Password is required.</span>
-                            <span *ngIf="Password.hasError('minlength')">Atleast 5 characters needed for password.</span>
-                            <span *ngIf="Password.hasError('maxlength')">Only 10 characters allowed for password.</span>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="confirmPassword" class="text-uppercase">Confirm Password</label>
-                        <input id="confirmPassword" formControlName="confirmPassword" type="password" class="form-control" placeholder="" required>
-                        <div *ngIf="confirmPassword.touched && confirmPassword.errors" class="text-danger">
-                            <span *ngIf="confirmPassword.hasError('required')">Confirm Password is required.</span>
-                            <span *ngIf="confirmPassword.hasError('mustMatch')">Password Must Match.</span>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="email" class="text-uppercase">Email</label>
-                        <input id="email" formControlName="email" type="text" class="form-control" placeholder="eg: johndoe@techhowdy.com">
-                        <div *ngIf="email.touched && email.errors" class="text-danger">
-                            <span *ngIf="email.hasError('required')">Email is required.</span>
-                            <span *ngIf="email.hasError('email')">Please provide valid email.</span>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <input type="button" id="register" (click)="register()" [disabled]="insertForm.invalid" class="btn btn-login btn-info btn-block" value="Register" />
-                    </div>
-                </form>
-
+<div class="row">
+    <div class="col-md-4 register-sec">
+        <h2 class="text-center">Register</h2>
+        <form class="login-form" method="post" [formGroup]="form">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input id="username" formControlName="username" type="text" class="form-control" placeholder="" required>
+                <div *ngIf="Username.touched && Username.invalid" class="text-danger">
+                    <span *ngIf="Username.errors?.required">This field is required.</span>
+                    <span *ngIf="Username.errors?.maxlength">This field must be up to 32 characters long.</span>
+                </div>
             </div>
-        </div>
+            <div class="form-group">
+                <label for="displayName">Display name</label>
+                <input id="displayName" formControlName="displayName" type="text" class="form-control" placeholder="" required>
+                <div *ngIf="DisplayName.touched && DisplayName.invalid" class="text-danger">
+                    <span *ngIf="DisplayName.errors?.required">This field is required</span>
+                    <span *ngIf="DisplayName.errors?.maxlength">This field must be up to 32 characters long</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input id="password" formControlName="password" type="password" class="form-control" placeholder="" required>
+                <div *ngIf="Password.touched && Password.invalid" class="text-danger">
+                    <span *ngIf="Password.errors?.required">This field is required</span>
+                    <span *ngIf="Password.errors?.minlength">This field must be at least 10 characters long</span>
+                    <span *ngIf="Password.errors?.maxlength">This field must be up to 32 characters long</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="confirmPassword">Confirm Password</label>
+                <input id="confirmPassword" formControlName="confirmPassword" type="password" class="form-control" placeholder="" required>
+                <div *ngIf="ConfirmPassword.touched && ConfirmPassword.invalid" class="text-danger">
+                    <span *ngIf="ConfirmPassword.errors?.required">This field is required</span>
+                </div>
+                <div *ngIf="form.errors?.mismatch && !ConfirmPassword.errors?.required" class="text-danger">
+                    <span>Passwords do not match.</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input id="email" formControlName="email" type="text" class="form-control" placeholder="" required>
+                <div *ngIf="Email.touched && Email.invalid" class="text-danger">
+                    <span *ngIf="Email.errors?.required">This field is required.</span>
+                    <span *ngIf="Email.errors?.maxlength">This field must be up to 32 characters long.</span>
+                    <span *ngIf="Email.errors?.pattern">This field is invalid.</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <input type="button" id="register" (click)="register()" class="btn btn-login btn-info btn-block" value="Register" />
+            </div>
+        </form>
     </div>
-</section>
+</div>

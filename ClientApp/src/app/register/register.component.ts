@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
-import { AccountService } from '../services/account.service';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { AccountService } from '../services/account.service';
+import { PasswordValidator } from './password-validator';
 
 @Component({
     selector: 'app-register',
@@ -10,36 +11,34 @@ import { Router } from '@angular/router';
 
 export class RegisterComponent implements OnInit {
 
-    insertForm: FormGroup;
-    username: FormControl;
-    displayName: FormControl
-    password: FormControl;
-    confirmPassword: FormControl;
-    email: FormControl;
+    form: FormGroup;
     invalidRegister: boolean
     errorList: string[] = [];
 
-    constructor(private fb: FormBuilder, private accountService: AccountService, private router: Router) { }
+    constructor(private formBuilder: FormBuilder, private accountService: AccountService, private router: Router) { }
 
     ngOnInit() {
-        this.username = new FormControl('', [Validators.required, Validators.maxLength(10)]);
-        this.displayName = new FormControl('', [Validators.required]);
-        this.password = new FormControl('12345', [Validators.required, Validators.minLength(5), Validators.maxLength(10)]);
-        this.confirmPassword = new FormControl('12345', [Validators.required]);
-        this.email = new FormControl('', [Validators.required]);
-        this.insertForm = this.fb.group({
-            'username': this.username,
-            'displayName': this.displayName,
-            'password': this.password,
-            'confirmPassword': this.confirmPassword,
-            'email': this.email
-        });
+        this.initForm()
+    }
+
+    initForm() {
+        this.form = this.formBuilder.group({
+            username: ['', [Validators.required, Validators.maxLength(32)]],
+            displayName: ['', [Validators.required, Validators.maxLength(32)]],
+            email: ['', [Validators.required, Validators.maxLength(32), Validators.pattern(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)]],
+            password: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(128)]],
+            confirmPassword: ['', [Validators.required]],
+        }, { validator: PasswordValidator })
     }
 
     register() {
-        const userRegister = this.insertForm.value;
-        this.accountService.register(userRegister.username, userRegister.displayName, userRegister.password, userRegister.confirmPassword, userRegister.email).subscribe((result) => {
-            alert(`An email was sent to ${userRegister.email} for account verification`)
+        if (!this.form.valid) {
+            console.log('Invalid form')
+            return
+        }
+        const form = this.form.value;
+        this.accountService.register(form.username, form.displayName, form.password, form.confirmPassword, form.email).subscribe(() => {
+            alert(`An email was sent to ${form.email} for account verification`)
             this.invalidRegister = false
             this.router.navigateByUrl('/login');
         }, error => {
@@ -55,15 +54,23 @@ export class RegisterComponent implements OnInit {
     }
 
     get Username() {
-        return this.username;
+        return this.form.get('username');
+    }
+
+    get DisplayName() {
+        return this.form.get('displayName');
     }
 
     get Password() {
-        return this.password;
+        return this.form.get('password');
+    }
+
+    get ConfirmPassword() {
+        return this.form.get('confirmPassword')
     }
 
     get Email() {
-        return this.email;
+        return this.form.get('email');
     }
 
 }
