@@ -1,11 +1,4 @@
 <section class="register-block">
-    <div class="text-center mb-3 alert alert-warning" *ngIf="invalidRegister" role="alert">
-        <strong *ngFor="let error of errorList">{{ error }}<br /></strong>
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
-
     <div class="container signLog">
         <div class="row">
             <div class="col-md-4 register-sec">
@@ -16,6 +9,7 @@
                         <input id="username" formControlName="username" type="text" class="form-control" placeholder="" required>
                         <div *ngIf="Username.touched && Username.errors" class="text-danger">
                             <span *ngIf="Username.hasError('required')">Username is required.</span>
+                            <span *ngIf="Username.hasError('maxLength')">Username length must be up to 10 characters long.</span>
                         </div>
                     </div>
                     <div class="form-group">
@@ -46,7 +40,7 @@
                     <div class="form-group">
                         <label for="email" class="text-uppercase">Email</label>
                         <input id="email" formControlName="email" type="text" class="form-control" placeholder="eg: johndoe@techhowdy.com">
-                        <div *ngIf="email.touched && email.errors" class="errorMessage">
+                        <div *ngIf="email.touched && email.errors" class="text-danger">
                             <span *ngIf="email.hasError('required')">Email is required.</span>
                             <span *ngIf="email.hasError('email')">Please provide valid email.</span>
                         </div>

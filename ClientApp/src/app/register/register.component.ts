@@ -22,7 +22,7 @@ export class RegisterComponent implements OnInit {
     constructor(private fb: FormBuilder, private accountService: AccountService, private router: Router) { }
 
     ngOnInit() {
-        this.username = new FormControl('', [Validators.required]);
+        this.username = new FormControl('', [Validators.required, Validators.maxLength(10)]);
         this.displayName = new FormControl('', [Validators.required]);
         this.password = new FormControl('12345', [Validators.required, Validators.minLength(5), Validators.maxLength(10)]);
         this.confirmPassword = new FormControl('12345', [Validators.required]);
@@ -39,15 +39,18 @@ export class RegisterComponent implements OnInit {
     register() {
         const userRegister = this.insertForm.value;
         this.accountService.register(userRegister.username, userRegister.displayName, userRegister.password, userRegister.confirmPassword, userRegister.email).subscribe((result) => {
-            console.log(result)
+            alert(`An email was sent to ${userRegister.email} for account verification`)
             this.invalidRegister = false
             this.router.navigateByUrl('/login');
         }, error => {
             this.invalidRegister = true
-            console.log(this.invalidRegister);
+            this.errorList = []
             error.error.response.forEach((element: string) => {
-                this.errorList.push(element);
+                this.errorList.push(element + '\n');
+                console.log(element)
             });
+            console.log(this.errorList)
+            alert(this.errorList)
         });
     }
 
@@ -57,6 +60,10 @@ export class RegisterComponent implements OnInit {
 
     get Password() {
         return this.password;
+    }
+
+    get Email() {
+        return this.email;
     }
 
 }

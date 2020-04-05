@@ -41,7 +41,7 @@ export class LoginComponent implements OnInit {
             this.router.navigateByUrl(this.returnUrl);
         }, error => {
             this.invalidLogin = true;
-            this.errorMessage = error.error.response;
+            alert(error.error.response)
             console.log(this.errorMessage);
         });
     }
