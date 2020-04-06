@@ -13,7 +13,6 @@ export class LoginComponent implements OnInit {
     form: FormGroup;
     returnUrl: string;
     errorList = '';
-    invalidLogin: boolean;
 
     constructor(private formBuilder: FormBuilder, private accountService: AccountService, private router: Router, private activatedRoute: ActivatedRoute) { }
 
@@ -30,15 +29,10 @@ export class LoginComponent implements OnInit {
     }
 
     login() {
-        if (!this.form.valid) {
-            return
-        }
         const form = this.form.value;
         this.accountService.login(form.username, form.password).subscribe(() => {
-            this.invalidLogin = false;
             this.router.navigateByUrl(this.returnUrl);
         }, error => {
-            this.invalidLogin = true;
             this.errorList = ''
             this.errorList = error.error.response
             console.log(this.errorList)

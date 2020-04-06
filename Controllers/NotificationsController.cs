@@ -10,7 +10,7 @@ namespace Users.Controllers {
             return View();
         }
 
-        public IActionResult ResetPasswordConfirmation(string userId, string code) {
+        public IActionResult ResetPasswordConfirmation() {
             return View();
         }
     }

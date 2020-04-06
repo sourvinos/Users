@@ -4,9 +4,6 @@ namespace Users.Models {
 
     public class ResetPasswordViewModel {
 
-        [EmailAddress]
-        [Required(ErrorMessage = "Email is required")]
-        [MaxLength(128, ErrorMessage = "Email can not be longer than 128 characters")]
         public string Email { get; set; }
 
         [DataType(DataType.Password)]

@@ -11,41 +11,42 @@ import { Router, ActivatedRoute } from '@angular/router';
 export class ResetPasswordComponent implements OnInit {
 
     insertForm: FormGroup;
-    email: FormControl;
+    email: string;
     password: FormControl;
-    cpassword: FormControl;
-    token: FormControl
+    confirmPassword: FormControl;
+    token: string
     invalidResetPassword: boolean
     errorList: string[] = [];
 
     constructor(private fb: FormBuilder, private accountService: AccountService, private router: Router, private activatedRoute: ActivatedRoute) {
         this.activatedRoute.params.subscribe(p => {
             this.email = p['email']
-            this.token = p['tokenEncoded']
+            this.token = p['token']
         })
     }
 
     ngOnInit() {
         this.password = new FormControl('12345', [Validators.required, Validators.minLength(5), Validators.maxLength(10)]);
-        this.cpassword = new FormControl('12345', [Validators.required]);
+        this.confirmPassword = new FormControl('12345', [Validators.required]);
         this.insertForm = this.fb.group({
             'password': this.password,
-            'cpassword': this.cpassword,
+            'confirmPassword': this.confirmPassword,
         });
     }
 
-    resetPassword() {
+    onSubmit() {
         const resetPassword = this.insertForm.value;
-        this.accountService.resetPassword(resetPassword.email, resetPassword.password, resetPassword.cpassword, resetPassword.token).subscribe((result) => {
-            console.log(result)
-            this.invalidResetPassword = false
+        this.accountService.resetPassword(this.email, resetPassword.password, resetPassword.confirmPassword, this.token).subscribe(() => {
+            alert('Password reset')
             this.router.navigateByUrl('/login');
         }, error => {
-            this.invalidResetPassword = true
-            error.error.value.forEach((element: string) => {
-                this.errorList.push(element);
-            });
-        });
+            this.errorList = []
+            error.error.response.forEach((element: string) => {
+                this.errorList.push(element + '\n');
+                console.log(element)
+            })
+            alert(this.errorList)
+        })
     }
 
     get Password() {

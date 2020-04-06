@@ -46,12 +46,8 @@ export class AccountService {
         }))
     }
 
-    resetPassword(email: string, password: string, cpassword: string, token: string) {
-        return this.http.post<any>(this.baseUrlResetPassword, { email, password, cpassword, token }).pipe(map(result => {
-            return result
-        }, (error: any) => {
-            return error
-        }))
+    resetPassword(email: string, password: string, confirmPassword: string, token: string) {
+        return this.http.post<any>(this.baseUrlResetPassword, { email, password, confirmPassword, token })
     }
 
     getNewRefreshToken(): Observable<any> {

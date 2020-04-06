@@ -13,7 +13,6 @@ import { FieldValidators } from './username-validators';
 export class RegisterComponent implements OnInit {
 
     form: FormGroup;
-    invalidRegister: boolean
     errorList: string[] = [];
 
     constructor(private formBuilder: FormBuilder, private accountService: AccountService, private router: Router) { }
@@ -35,22 +34,16 @@ export class RegisterComponent implements OnInit {
     }
 
     register() {
-        if (!this.form.valid) {
-            return
-        }
         const form = this.form.value;
         this.accountService.register(form.username, form.displayName, form.passwords.password, form.passwords.confirmPassword, form.email).subscribe(() => {
             alert(`An email was sent to ${form.email} for account verification`)
-            this.invalidRegister = false
             this.router.navigateByUrl('/login');
         }, error => {
-            this.invalidRegister = true
             this.errorList = []
             error.error.response.forEach((element: string) => {
                 this.errorList.push(element + '\n');
                 console.log(element)
             });
-            console.log(this.errorList)
             alert(this.errorList)
         });
     }

@@ -10,36 +10,38 @@ import { Router } from '@angular/router';
 
 export class ForgotPasswordComponent implements OnInit {
 
-    insertForm: FormGroup;
-    email: FormControl;
-    invalidForgotPassword: boolean
+    form: FormGroup;
     errorList: string[] = [];
 
-    constructor(private fb: FormBuilder, private accountService: AccountService, private router: Router) { }
+    constructor(private formBuilder: FormBuilder, private accountService: AccountService, private router: Router) { }
 
     ngOnInit() {
-        this.email = new FormControl('', [Validators.required]);
-        this.insertForm = this.fb.group({
-            'email': this.email
-        });
+        this.initForm()
     }
 
-    forgotPassword() {
-        const forgotPassword = this.insertForm.value;
-        this.accountService.forgotPassword(forgotPassword.email).subscribe((result) => {
-            console.log(result)
-            this.invalidForgotPassword = false
+    initForm() {
+        this.form = this.formBuilder.group({
+            email: ['', [Validators.required, Validators.email]],
+        })
+    }
+
+    onSubmit() {
+        const form = this.form.value;
+        this.accountService.forgotPassword(form.email).subscribe(() => {
+            alert(`An email was sent to ${form.email} for password reset`)
             this.router.navigateByUrl('/login');
         }, error => {
-            this.invalidForgotPassword = true
-            error.error.value.forEach((element: string) => {
-                this.errorList.push(element);
+            this.errorList = []
+            error.error.response.forEach((element: string) => {
+                this.errorList.push(element + '\n');
+                console.log(element)
             });
+            alert(this.errorList)
         });
     }
 
     get Email() {
-        return this.email;
+        return this.form.get('email')
     }
 
 }

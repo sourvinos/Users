@@ -68,9 +68,8 @@ namespace Users.Controllers {
                     string baseUrl = $"{this.Request.Scheme}://{this.Request.Host.Value.ToString()}{this.Request.PathBase.Value.ToString()}";
                     string passwordResetLink = Url.Content($"{baseUrl}/resetPassword/{model.Email}/{tokenEncoded}");
                     emailSender.SendResetPasswordEmail(user.Email, passwordResetLink);
-                    return Ok(new { response = "An email was sent to your account" });
                 }
-                return Ok(new { response = "If you have an activated account with us, an email was sent to your account" });
+                return Ok(new { response = "An email was sent to your account" });
             }
             return BadRequest(new { response = ModelState.Values.SelectMany(x => x.Errors).Select(x => x.ErrorMessage) });
         }
@@ -92,7 +91,7 @@ namespace Users.Controllers {
                 var tokenDecoded = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(model.Token));
                 var result = await userManager.ResetPasswordAsync(user, tokenDecoded, model.Password);
                 if (result.Succeeded) {
-                    return RedirectToAction("ResetPasswordConfirmation", "Notifications");
+                    return Ok(new { response = "User created successfully" });
                 }
                 return BadRequest(new { response = result.Errors.Select(x => x.Description) });
             }
