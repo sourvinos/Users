@@ -12,6 +12,7 @@ export class AccountService {
     private baseUrlForgotPassword = '/api/account/forgotPassword'
     private baseUrlResetPassword = '/api/account/resetPassword'
     private baseUrlToken = '/api/token/auth'
+    private baseUrlChangePassword = '/api/account/changePassword'
 
     private loginStatus = new BehaviorSubject<boolean>(this.checkLoginStatus())
     private username = new BehaviorSubject<string>(localStorage.getItem('username'))
@@ -21,6 +22,10 @@ export class AccountService {
 
     register(username: string, displayName: string, password: string, confirmPassword: string, email: string) {
         return this.http.post<any>(this.baseUrlRegister, { username, displayName, password, confirmPassword, email })
+    }
+
+    changePassword(currentPassword: string, newPassword: string, confirmNewPassword: string) {
+        return this.http.post<any>(this.baseUrlChangePassword, { currentPassword, newPassword, confirmNewPassword })
     }
 
     login(username: string, password: string) {

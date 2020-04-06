@@ -15,6 +15,7 @@ import { ProductListComponent } from './products/ui/product-list.component';
 import { ProductUpdateComponent } from './products/ui/product-update.component';
 import { RegisterComponent } from './register/register.component';
 import { ResetPasswordComponent } from './reset-password/reset-password.component';
+import { ChangePasswordComponent } from './change-password/change-password.component';
 
 @NgModule({
     declarations: [
@@ -39,6 +40,7 @@ import { ResetPasswordComponent } from './reset-password/reset-password.componen
             { path: 'home', redirectTo: '/' },
             { path: 'register', component: RegisterComponent },
             { path: 'login', component: LoginComponent },
+            { path: 'changePassword', component: ChangePasswordComponent },
             { path: 'forgotPassword', component: ForgotPasswordComponent },
             { path: 'resetPassword/:email/:token', component: ResetPasswordComponent },
             { path: 'products', component: ProductListComponent, canActivate: [AuthGuardService] },
