@@ -49,16 +49,16 @@ export class HttpInterceptor implements HttpInterceptor {
             this.tokenSubject.next(null)
             return this.accountService.getNewRefreshToken().pipe(
                 switchMap((tokenresponse: any) => {
-                    console.log('New refresh token ' + tokenresponse)
+                    console.log('New refresh token ' + tokenresponse.response)
                     if (tokenresponse) {
-                        this.tokenSubject.next(tokenresponse.authToken.token)
+                        this.tokenSubject.next(tokenresponse.response.token)
                         localStorage.setItem('loginStatus', '1')
-                        localStorage.setItem('jwt', tokenresponse.authToken.token)
-                        localStorage.setItem('username', tokenresponse.authToken.userName)
-                        localStorage.setItem('displayName', tokenresponse.authToken.displayName)
-                        localStorage.setItem('expiration', tokenresponse.authToken.expiration)
-                        localStorage.setItem('userRole', tokenresponse.authToken.roles)
-                        localStorage.setItem('refreshToken', tokenresponse.authToken.refresh_token)
+                        localStorage.setItem('jwt', tokenresponse.response.token)
+                        localStorage.setItem('username', tokenresponse.response.username)
+                        localStorage.setItem('displayName', tokenresponse.response.displayName)
+                        localStorage.setItem('expiration', tokenresponse.response.expiration)
+                        localStorage.setItem('userRole', tokenresponse.response.roles)
+                        localStorage.setItem('refreshToken', tokenresponse.response.refresh_token)
                         console.log('Token refreshed')
                         return next.handle(this.attachTokenToRequest(request))
                     }

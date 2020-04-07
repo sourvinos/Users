@@ -61,16 +61,16 @@ export class AccountService {
         const grantType = 'refresh_token'
         return this.http.post<any>(this.baseUrlToken, { username, refreshToken, grantType }).pipe(
             map(response => {
-                console.log('Refresh token' + response.token)
-                if (response && response.authToken.token) {
+                console.log('Refresh token' + response.response.token)
+                if (response.response.token) {
                     this.loginStatus.next(true)
                     localStorage.setItem('loginStatus', '1')
-                    localStorage.setItem('jwt', response.token)
-                    localStorage.setItem('username', response.username)
-                    localStorage.setItem('displayName', response.displayName)
-                    localStorage.setItem('expiration', response.expiration)
-                    localStorage.setItem('userRole', response.roles)
-                    localStorage.setItem('refreshToken', response.refresh_token)
+                    localStorage.setItem('jwt', response.response.token)
+                    localStorage.setItem('username', response.response.username)
+                    localStorage.setItem('displayName', response.response.displayName)
+                    localStorage.setItem('expiration', response.response.expiration)
+                    localStorage.setItem('userRole', response.response.roles)
+                    localStorage.setItem('refreshToken', response.response.refresh_token)
                 }
                 return <any>response
             })

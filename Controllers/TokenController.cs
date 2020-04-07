@@ -110,8 +110,8 @@ namespace Users.Controllers {
                 db.Tokens.Remove(rt);
                 db.Tokens.Add(rtNew);
                 db.SaveChanges();
-                var response = await CreateAccessToken(user, rtNew.Value);
-                return Ok(new { response = response });
+                var token = await CreateAccessToken(user, rtNew.Value);
+                return Ok(new { response = token });
             } catch {
                 return Unauthorized(new { response = "Authentication failed" });
             }
