@@ -10,13 +10,14 @@ import { Observable } from 'rxjs';
 
 export class ProductListComponent implements OnInit {
 
-    products$: Observable<Product[]>;
     products: Product[];
     constructor(private productService: ProductService) { }
 
     ngOnInit() {
-        this.products$ = this.productService.get()
-        this.products$.subscribe(result => { this.products = result; });
+        this.productService.get().subscribe(result => {
+            this.products = result
+            console.log('Product count ' + this.products.length)
+        })
     }
 
 }

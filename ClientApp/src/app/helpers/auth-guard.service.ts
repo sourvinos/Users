@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core'
 import { CanActivate, Router } from '@angular/router'
 import { Observable } from 'rxjs'
-import { map, take } from 'rxjs/operators'
+import { map } from 'rxjs/operators'
 import { AccountService } from 'src/app/services/account.service'
 
 export interface CanComponentDeactivate {
@@ -15,7 +15,7 @@ export class AuthGuardService implements CanActivate {
     constructor(private accountService: AccountService, private router: Router) { }
     canActivate(): Observable<boolean> {
         return this.accountService.isLoggedIn.pipe(map((loginStatus: boolean) => {
-            if (!loginStatus || loginStatus !== undefined) {
+            if (!loginStatus || loginStatus === undefined) {
                 this.accountService.clearLocalStorage()
                 this.router.navigate(['/login'])
                 return false

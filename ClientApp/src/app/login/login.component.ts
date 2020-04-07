@@ -35,7 +35,6 @@ export class LoginComponent implements OnInit {
         }, error => {
             this.errorList = ''
             this.errorList = error.error.response
-            console.log(this.errorList)
             alert(this.errorList)
         });
     }

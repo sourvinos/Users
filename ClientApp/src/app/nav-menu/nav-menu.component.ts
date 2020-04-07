@@ -30,7 +30,6 @@ export class NavMenuComponent {
     }
 
     logout() {
-        this.productService.clearCache();
         this.accountService.logout();
     }
 

@@ -1,22 +1,17 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { first, flatMap, shareReplay } from 'rxjs/operators';
+import { first, flatMap } from 'rxjs/operators';
 import { Product } from './product';
 
 @Injectable({ providedIn: 'root' })
 
 export class ProductService {
 
-    private products: Observable<Product[]>;
-
     constructor(private http: HttpClient) { }
 
     get() {
-        if (!this.products) {
-            this.products = this.http.get<Product[]>('/api/product/get').pipe(shareReplay());
-        }
-        return this.products;
+        console.log('\n' + 'Getting products')
+        return this.http.get<Product[]>('/api/product/get')
     }
 
     getProduct(id: number) {
@@ -33,16 +28,6 @@ export class ProductService {
 
     deleteProduct(id: number) {
         return this.http.delete<Product>('api/product/deleteProduct/' + id);
-    }
-
-    /**
-     * Caller(s)
-     *  nav-menu.component - logout()
-     * Description
-     *  Clears the browser's cached products
-     */
-    clearCache() {
-        this.products = null;
     }
 
 }

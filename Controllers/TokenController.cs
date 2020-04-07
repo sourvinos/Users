@@ -28,16 +28,13 @@ namespace Users.Controllers {
 
         [HttpPost("[action]")]
         public async Task<IActionResult> Auth([FromBody] TokenRequest model) {
-            if (!ModelState.IsValid) {
-                return BadRequest(new { response = ModelState.Values.SelectMany(x => x.Errors).Select(x => x.ErrorMessage) });
-            }
             switch (model.GrantType) {
                 case "password":
                     return await GenerateNewToken(model);
                 case "refresh_token":
                     return await RefreshToken(model);
                 default:
-                    return Unauthorized(new { Response = "Authentication failed" });
+                    return Unauthorized(new { response = "Authentication failed" });
             }
         }
 
@@ -106,17 +103,17 @@ namespace Users.Controllers {
             try {
                 var rt = db.Tokens.FirstOrDefault(t => t.ClientId == appSettings.ClientId && t.Value == model.RefreshToken.ToString());
                 if (rt == null) return new UnauthorizedResult();
-                if (rt.ExpiryTime < DateTime.UtcNow) return Unauthorized(new { Response = "Authentication failed" });
+                if (rt.ExpiryTime < DateTime.UtcNow) return Unauthorized(new { response = "Authentication failed" });
                 var user = await userManager.FindByIdAsync(rt.UserId);
-                if (user == null) return Unauthorized(new { Response = "Authentication failed" });
+                if (user == null) return Unauthorized(new { response = "Authentication failed" });
                 var rtNew = CreateRefreshToken(rt.ClientId, rt.UserId);
                 db.Tokens.Remove(rt);
                 db.Tokens.Add(rtNew);
                 db.SaveChanges();
                 var response = await CreateAccessToken(user, rtNew.Value);
-                return Ok(new { authToken = response });
+                return Ok(new { response = response });
             } catch {
-                return Unauthorized(new { Response = "Authentication failed" });
+                return Unauthorized(new { response = "Authentication failed" });
             }
         }
 

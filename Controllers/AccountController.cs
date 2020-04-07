@@ -102,11 +102,11 @@ namespace Users.Controllers {
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordViewModel vm) {
             if (ModelState.IsValid) {
                 var user = await userManager.GetUserAsync(User);
-                if (user == null) { return Unauthorized(new { Response = "Authentication failed" }); }
+                if (user == null) { return Unauthorized(new { response = "Authentication failed" }); }
                 var result = await userManager.ChangePasswordAsync(user, vm.CurrentPassword, vm.NewPassword);
                 if (result.Succeeded) {
                     await signInManager.RefreshSignInAsync(user);
-                    return Ok(new { Response = "Password changed successfully" });
+                    return Ok(new { response = "Password changed successfully" });
                 }
                 return BadRequest(new { response = result.Errors.Select(x => x.Description) });
             }

@@ -56,22 +56,23 @@ export class AccountService {
     }
 
     getNewRefreshToken(): Observable<any> {
-        const userName = localStorage.getItem('username')
+        const username = localStorage.getItem('username')
         const refreshToken = localStorage.getItem('refreshToken')
         const grantType = 'refresh_token'
-        return this.http.post<any>(this.baseUrlToken, { userName, refreshToken, grantType }).pipe(
-            map(result => {
-                if (result && result.authToken.token) {
+        return this.http.post<any>(this.baseUrlToken, { username, refreshToken, grantType }).pipe(
+            map(response => {
+                console.log('Refresh token' + response.token)
+                if (response && response.authToken.token) {
                     this.loginStatus.next(true)
                     localStorage.setItem('loginStatus', '1')
-                    localStorage.setItem('jwt', result.authToken.token)
-                    localStorage.setItem('username', result.authToken.username)
-                    localStorage.setItem('displayName', result.authToken.displayName)
-                    localStorage.setItem('expiration', result.authToken.expiration)
-                    localStorage.setItem('userRole', result.authToken.roles)
-                    localStorage.setItem('refreshToken', result.authToken.refresh_token)
-                    return result
+                    localStorage.setItem('jwt', response.token)
+                    localStorage.setItem('username', response.username)
+                    localStorage.setItem('displayName', response.displayName)
+                    localStorage.setItem('expiration', response.expiration)
+                    localStorage.setItem('userRole', response.roles)
+                    localStorage.setItem('refreshToken', response.refresh_token)
                 }
+                return <any>response
             })
         )
     }
@@ -104,15 +105,13 @@ export class AccountService {
     }
 
     private checkLoginStatus(): boolean {
-
         const loginCookie = localStorage.getItem('loginStatus')
-
         if (loginCookie === '1') {
             if (localStorage.getItem('jwt') !== null || localStorage.getItem('jwt') !== undefined) {
                 return true
             }
         }
-
+        return false
     }
 
     private setLoginStatus(status: boolean) {

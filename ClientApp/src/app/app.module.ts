@@ -15,7 +15,6 @@ import { ProductListComponent } from './products/ui/product-list.component';
 import { ProductUpdateComponent } from './products/ui/product-update.component';
 import { RegisterComponent } from './register/register.component';
 import { ResetPasswordComponent } from './reset-password/reset-password.component';
-import { ChangePasswordComponent } from './change-password/change-password.component';
 
 @NgModule({
     declarations: [
@@ -40,7 +39,6 @@ import { ChangePasswordComponent } from './change-password/change-password.compo
             { path: 'home', redirectTo: '/' },
             { path: 'register', component: RegisterComponent },
             { path: 'login', component: LoginComponent },
-            { path: 'changePassword', component: ChangePasswordComponent },
             { path: 'forgotPassword', component: ForgotPasswordComponent },
             { path: 'resetPassword/:email/:token', component: ResetPasswordComponent },
             { path: 'products', component: ProductListComponent, canActivate: [AuthGuardService] },
@@ -48,7 +46,7 @@ import { ChangePasswordComponent } from './change-password/change-password.compo
             { path: '**', redirectTo: '/' }
         ])
     ],
-    // providers: [AuthGuardService, { provide: HTTP_INTERCEPTORS, useClass: HttpInterceptor, multi: true }],
+    providers: [AuthGuardService, { provide: HTTP_INTERCEPTORS, useClass: HttpInterceptor, multi: true }],
     bootstrap: [AppComponent]
 })
 

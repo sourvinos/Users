@@ -6,26 +6,31 @@ import { AccountService } from './../services/account.service';
 
 @Injectable({ providedIn: 'root' })
 
-// Gets the token from localstorage and attaches it to the request
-// In app.module it is added in the providers array and in every feature module
 export class HttpInterceptor implements HttpInterceptor {
 
+    //#region Init
     private isTokenRefreshing = false;
     private tokenSubject: BehaviorSubject<string> = new BehaviorSubject<string>(null);
+
+    //#endregion
 
     constructor(private accountService: AccountService, private http: HttpClient) { }
 
     intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-        return next.handle(this.attachTokenToRequest(request)).pipe(tap((event: HttpEvent<any>) => {
-            if (event instanceof HttpResponse) { }
-        }),
-            catchError((err): Observable<any> => {
+        return next.handle(this.attachTokenToRequest(request)).pipe(
+            tap((event: HttpEvent<any>) => {
+                if (event instanceof HttpResponse) {
+                    console.log('User is logged in, token is valid')
+                }
+            }), catchError((err): Observable<any> => {
                 if (this.isUserLoggedIn()) {
+                    console.log('User is logged in, catching error')
                     if (err instanceof HttpErrorResponse) {
                         switch ((<HttpErrorResponse>err).status) {
                             case 400:
                                 return <any>this.accountService.logout()
                             case 401:
+                                console.log('Token expired, attempting to refresh it')
                                 return this.handleHttpErrorResponse(request, next)
                         }
                     } else {
@@ -37,12 +42,14 @@ export class HttpInterceptor implements HttpInterceptor {
     }
 
     private handleHttpErrorResponse(request: HttpRequest<any>, next: HttpHandler) {
-
+        console.log('User is not authorized')
         if (!this.isTokenRefreshing) {
+            console.log('Token is not refreshing, continue')
             this.isTokenRefreshing = true
             this.tokenSubject.next(null)
             return this.accountService.getNewRefreshToken().pipe(
                 switchMap((tokenresponse: any) => {
+                    console.log('New refresh token ' + tokenresponse)
                     if (tokenresponse) {
                         this.tokenSubject.next(tokenresponse.authToken.token)
                         localStorage.setItem('loginStatus', '1')
@@ -52,14 +59,14 @@ export class HttpInterceptor implements HttpInterceptor {
                         localStorage.setItem('expiration', tokenresponse.authToken.expiration)
                         localStorage.setItem('userRole', tokenresponse.authToken.roles)
                         localStorage.setItem('refreshToken', tokenresponse.authToken.refresh_token)
-                        console.log('Token refreshed...')
+                        console.log('Token refreshed')
                         return next.handle(this.attachTokenToRequest(request))
                     }
                     return <any>this.accountService.logout()
                 }),
-                catchError(err => {
+                catchError(error => {
                     this.accountService.logout()
-                    return this.handleError(err)
+                    return this.handleError(error)
                 }),
                 finalize(() => {
                     this.isTokenRefreshing = false
@@ -67,20 +74,19 @@ export class HttpInterceptor implements HttpInterceptor {
             )
         } else {
             this.isTokenRefreshing = false
-            return this.tokenSubject.pipe(filter(token => token != null), take(1), switchMap((token) => next.handle(this.attachTokenToRequest(request))))
+            return this.tokenSubject.pipe(filter(token => token != null), take(1), switchMap(() => next.handle(this.attachTokenToRequest(request))))
         }
     }
 
     private attachTokenToRequest(request: HttpRequest<any>) {
-
         const token = localStorage.getItem('jwt');
-
+        console.log('Attaching token to request')
+        console.log(token)
         return request.clone({
             setHeaders: {
                 Authorization: `Bearer ${token}`
             }
         })
-
     }
 
     private handleError(errorResponse: HttpErrorResponse) {

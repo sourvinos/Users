@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -11,13 +12,14 @@ namespace Users.Controllers {
     [Route("api/[controller]")]
     [Authorize("RequireLoggedIn")]
     public class ProductController : ControllerBase {
+
         private readonly ApplicationDbContext db;
-        public ProductController(ApplicationDbContext db) =>
-            (this.db) = (db);
+
+        public ProductController(ApplicationDbContext db) => (this.db) = (db);
 
         [HttpGet("[action]")]
-        public IActionResult Get() {
-            return Ok(db.Products.ToList());
+        public async Task<IEnumerable<Product>> Get() {
+            return await db.Products.ToListAsync();
         }
 
         [HttpGet("[action]/{id}")]
