@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
-import { AccountService } from '../services/account.service';
-import { CrossFieldValidators } from './crossfield-validators';
-import { FieldValidators } from './username-validators';
+import { Component, OnInit } from '@angular/core'
+import { FormBuilder, FormGroup, Validators } from '@angular/forms'
+import { Router } from '@angular/router'
+import { AccountService } from '../services/account.service'
+import { CrossFieldValidators } from './crossfield-validators'
+import { FieldValidators } from './username-validators'
 
 @Component({
     selector: 'app-register',
@@ -12,10 +12,15 @@ import { FieldValidators } from './username-validators';
 
 export class RegisterComponent implements OnInit {
 
-    form: FormGroup;
-    errorList: string[] = [];
+    //#region Init
+    form: FormGroup
+    errorList: string[] = []
 
-    constructor(private formBuilder: FormBuilder, private accountService: AccountService, private router: Router) { }
+    //#endregion Init
+
+    constructor(private formBuilder: FormBuilder, private accountService: AccountService, private router: Router) {
+
+    }
 
     ngOnInit() {
         this.initForm()
@@ -34,30 +39,30 @@ export class RegisterComponent implements OnInit {
     }
 
     register() {
-        const form = this.form.value;
+        const form = this.form.value
         this.accountService.register(form.username, form.displayName, form.passwords.password, form.passwords.confirmPassword, form.email).subscribe(() => {
             alert(`An email was sent to ${form.email} for account verification`)
-            this.router.navigateByUrl('/login');
+            this.router.navigateByUrl('/login')
         }, error => {
             this.errorList = []
             error.error.response.forEach((element: string) => {
-                this.errorList.push(element + '\n');
+                this.errorList.push(element + '\n')
                 console.log(element)
-            });
+            })
             alert(this.errorList)
-        });
+        })
     }
 
     get Username() {
-        return this.form.get('username');
+        return this.form.get('username')
     }
 
     get DisplayName() {
-        return this.form.get('displayName');
+        return this.form.get('displayName')
     }
 
     get Password() {
-        return this.form.get('passwords.password');
+        return this.form.get('passwords.password')
     }
 
     get ConfirmPassword() {
@@ -69,7 +74,7 @@ export class RegisterComponent implements OnInit {
     }
 
     get Email() {
-        return this.form.get('email');
+        return this.form.get('email')
     }
 
 }
