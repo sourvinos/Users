@@ -24,10 +24,6 @@ export class AccountService {
         return this.http.post<any>(this.baseUrlRegister, { username, displayName, password, confirmPassword, email })
     }
 
-    changePassword(currentPassword: string, newPassword: string, confirmNewPassword: string) {
-        return this.http.post<any>(this.baseUrlChangePassword, { currentPassword, newPassword, confirmNewPassword })
-    }
-
     login(username: string, password: string) {
         const grantType = 'password'
         return this.http.post<any>(this.baseUrlToken, { username, password, grantType }).pipe(map(response => {
@@ -101,7 +97,7 @@ export class AccountService {
     }
 
     private navigateHome() {
-        this.router.navigate(['/'])
+        this.router.navigateByUrl('/')
     }
 
     private checkLoginStatus(): boolean {
@@ -128,6 +124,10 @@ export class AccountService {
 
     get currentUserRole() {
         return this.userRole.asObservable()
+    }
+
+    changePassword(currentPassword: string, password: string, confirmPassword: string) {
+        return this.http.post<any>(this.baseUrlChangePassword, { currentPassword, password, confirmPassword })
     }
 
 }

@@ -17,7 +17,7 @@ export class AuthGuardService implements CanActivate {
         return this.accountService.isLoggedIn.pipe(map((loginStatus: boolean) => {
             if (!loginStatus || loginStatus === undefined) {
                 this.accountService.clearLocalStorage()
-                this.router.navigate(['/login'])
+                this.router.navigateByUrl('/login')
                 return false
             }
             return true

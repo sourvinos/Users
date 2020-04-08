@@ -17,28 +17,34 @@ export class HttpInterceptor implements HttpInterceptor {
     constructor(private accountService: AccountService, private http: HttpClient) { }
 
     intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-        return next.handle(this.attachTokenToRequest(request)).pipe(
-            tap((event: HttpEvent<any>) => {
-                if (event instanceof HttpResponse) {
-                    console.log('User is logged in, token is valid')
-                }
-            }), catchError((err): Observable<any> => {
-                if (this.isUserLoggedIn()) {
-                    console.log('User is logged in, catching error')
-                    if (err instanceof HttpErrorResponse) {
-                        switch ((<HttpErrorResponse>err).status) {
-                            case 400:
-                                return <any>this.accountService.logout()
-                            case 401:
-                                console.log('Token expired, attempting to refresh it')
-                                return this.handleHttpErrorResponse(request, next)
-                        }
-                    } else {
-                        return throwError(this.handleError)
+        if (this.isUserLoggedIn()) {
+            return next.handle(this.attachTokenToRequest(request)).pipe(
+                tap((event: HttpEvent<any>) => {
+                    if (event instanceof HttpResponse) {
+                        console.log('User is logged in, token is valid')
                     }
-                }
-            })
-        )
+                }), catchError((err): Observable<any> => {
+                    if (this.isUserLoggedIn()) {
+                        console.log('User is logged in, catching error')
+                        if (err instanceof HttpErrorResponse) {
+                            switch ((<HttpErrorResponse>err).status) {
+                                // case 400:
+                                // return <any>this.accountService.logout()
+                                case 401:
+                                    console.log('Token expired, attempting refresh')
+                                    return this.handleHttpErrorResponse(request, next)
+                                default:
+                                    return next.handle(request)
+                            }
+                        } else {
+                            return throwError(this.handleError)
+                        }
+                    }
+                })
+            )
+        } else {
+            return next.handle(request)
+        }
     }
 
     private handleHttpErrorResponse(request: HttpRequest<any>, next: HttpHandler) {

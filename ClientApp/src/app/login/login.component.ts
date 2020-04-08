@@ -12,7 +12,6 @@ export class LoginComponent implements OnInit {
 
     form: FormGroup;
     returnUrl: string;
-    errorList = '';
 
     constructor(private formBuilder: FormBuilder, private accountService: AccountService, private router: Router, private activatedRoute: ActivatedRoute) { }
 
@@ -33,18 +32,16 @@ export class LoginComponent implements OnInit {
         this.accountService.login(form.username, form.password).subscribe(() => {
             this.router.navigateByUrl(this.returnUrl);
         }, error => {
-            this.errorList = ''
-            this.errorList = error.error.response
-            alert(this.errorList)
+            alert(error.error.response)
         });
     }
 
     register() {
-        this.router.navigate(['/register']);
+        this.router.navigateByUrl('/register');
     }
 
     forgotPassword() {
-        this.router.navigate(['/forgotPassword']);
+        this.router.navigateByUrl('/forgotPassword');
     }
 
     get Username() {

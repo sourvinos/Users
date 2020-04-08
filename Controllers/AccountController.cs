@@ -2,6 +2,8 @@ using System;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
@@ -101,9 +103,9 @@ namespace Users.Controllers {
         [HttpPost("[action]")]
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordViewModel vm) {
             if (ModelState.IsValid) {
-                var user = await userManager.GetUserAsync(User);
+                var user = await userManager.FindByNameAsync("sourvinos");
                 if (user == null) { return Unauthorized(new { response = "Authentication failed" }); }
-                var result = await userManager.ChangePasswordAsync(user, vm.CurrentPassword, vm.NewPassword);
+                var result = await userManager.ChangePasswordAsync(user, vm.CurrentPassword, vm.Password);
                 if (result.Succeeded) {
                     await signInManager.RefreshSignInAsync(user);
                     return Ok(new { response = "Password changed successfully" });

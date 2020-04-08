@@ -5,6 +5,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 import { AuthGuardService } from 'src/app/helpers/auth-guard.service';
 import { AppComponent } from './app.component';
+import { ChangePasswordComponent } from './change-password/change-password.component';
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 import { HttpInterceptor } from './helpers/http-interceptor';
 import { HomeComponent } from './home/home.component';
@@ -23,6 +24,7 @@ import { ResetPasswordComponent } from './reset-password/reset-password.componen
         HomeComponent,
         RegisterComponent,
         LoginComponent,
+        ChangePasswordComponent,
         ForgotPasswordComponent,
         ResetPasswordComponent,
         ProductListComponent,
@@ -40,6 +42,7 @@ import { ResetPasswordComponent } from './reset-password/reset-password.componen
             { path: 'register', component: RegisterComponent },
             { path: 'login', component: LoginComponent },
             { path: 'forgotPassword', component: ForgotPasswordComponent },
+            { path: 'changePassword', component: ChangePasswordComponent, canActivate: [AuthGuardService] },
             { path: 'resetPassword/:email/:token', component: ResetPasswordComponent },
             { path: 'products', component: ProductListComponent, canActivate: [AuthGuardService] },
             { path: 'products/:id', component: ProductDetailsComponent, canActivate: [AuthGuardService] },
