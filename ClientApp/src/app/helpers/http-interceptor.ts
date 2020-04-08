@@ -28,8 +28,6 @@ export class HttpInterceptor implements HttpInterceptor {
                         console.log('User is logged in, catching error')
                         if (err instanceof HttpErrorResponse) {
                             switch ((<HttpErrorResponse>err).status) {
-                                // case 400:
-                                // return <any>this.accountService.logout()
                                 case 401:
                                     console.log('Token expired, attempting refresh')
                                     return this.handleHttpErrorResponse(request, next)
@@ -96,13 +94,11 @@ export class HttpInterceptor implements HttpInterceptor {
     }
 
     private handleError(errorResponse: HttpErrorResponse) {
-        let errorMsg: string
         if (errorResponse.error instanceof Error) {
-            errorMsg = 'An error occured :' + errorResponse.error.message
+            return `Front-end error ${errorResponse.error.message}`
         } else {
-            errorMsg = `Backend returned code ${errorResponse.status}, body was: ${errorResponse.error}`
+            return `Server error ${errorResponse.status} ${errorResponse.error}`
         }
-        return throwError(errorMsg)
     }
 
     private isUserLoggedIn() {
