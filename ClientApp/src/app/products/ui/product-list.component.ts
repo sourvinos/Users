@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ProductService } from '../classes/product.service';
 import { Product } from '../classes/product';
-import { Observable } from 'rxjs';
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
     selector: 'app-products',
@@ -11,7 +11,7 @@ import { Observable } from 'rxjs';
 export class ProductListComponent implements OnInit {
 
     products: Product[];
-    constructor(private productService: ProductService) { }
+    constructor(private productService: ProductService, private router: Router, private activatedRoute: ActivatedRoute) { }
 
     ngOnInit() {
         this.productService.get().subscribe(result => {
@@ -19,5 +19,4 @@ export class ProductListComponent implements OnInit {
             console.log('Product count ' + this.products.length)
         })
     }
-
 }

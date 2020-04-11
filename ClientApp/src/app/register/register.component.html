@@ -1,21 +1,33 @@
 <h2 class="text-center">Register</h2>
 
 <form [formGroup]="form">
-    <div class="form-group">
+    <mat-form-field class="example-full-width">
+        <mat-label>Favorite food</mat-label>
+        <input matInput placeholder="Ex. Pizza" value="Sushi">
+    </mat-form-field>
+    <!-- <div class="form-group">
         <label for="username">Username</label>
-        <input id="username" formControlName="username" type="text" class="form-control" placeholder="">
         <div *ngIf="Username.touched && Username.invalid" class="text-danger">
             <span *ngIf="Username.errors?.required">This field is required</span>
             <span *ngIf="Username.errors?.maxlength">This field can be up to {{ Username.errors.maxlength.requiredLength }} characters long</span>
             <span *ngIf="Username.errors?.cannotContainSpace">Spaces are not allowed</span>
         </div>
-    </div>
+    </div> -->
     <div class="form-group">
         <label for="displayName">Display name</label>
         <input id="displayName" formControlName="displayName" type="text" class="form-control" placeholder="">
         <div *ngIf="DisplayName.touched && DisplayName.invalid" class="text-danger">
             <span *ngIf="DisplayName.errors?.required">This field is required</span>
             <span *ngIf="DisplayName.errors?.maxlength">This field can be up to {{ DisplayName.errors.maxlength.requiredLength }} characters long</span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="email">Email</label>
+        <input id="email" formControlName="email" type="text" class="form-control" placeholder="">
+        <div *ngIf="Email.touched && Email.invalid" class="text-danger">
+            <span *ngIf="Email.errors?.required">This field is required</span>
+            <span *ngIf="Email.errors?.maxlength">This field can be up to {{ Email.errors.maxlength.requiredLength }} characters long</span>
+            <span *ngIf="!Email.errors?.required && !Email.errors?.isEmail">This field is invalid</span>
         </div>
     </div>
     <div formGroupName="passwords">
@@ -38,17 +50,9 @@
             </div>
         </div>
     </div>
-    <div class="form-group">
-        <label for="email">Email</label>
-        <input id="email" formControlName="email" type="text" class="form-control" placeholder="">
-        <div *ngIf="Email.touched && Email.invalid" class="text-danger">
-            <span *ngIf="Email.errors?.required">This field is required</span>
-            <span *ngIf="Email.errors?.maxlength">This field can be up to {{ Email.errors.maxlength.requiredLength }} characters long</span>
-            <span *ngIf="!Email.errors?.required && !Email.errors?.isEmail">This field is invalid</span>
-        </div>
-    </div>
     <br />
     <div class="form-group">
+        <button mat-button>Matbutton</button>
         <input type="button" id="register" (click)="register()" [disabled]="!form.valid" class="btn btn-login btn-info btn-block" value="Register" />
     </div>
     <br />

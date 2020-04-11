@@ -14,8 +14,8 @@ export class ProductService {
         return this.http.get<Product[]>('/api/product/get')
     }
 
-    getProduct(id: number) {
-        return this.get().pipe(flatMap(result => result), first(product => product.productId === id))
+    getProduct(productId: number) {
+        return this.http.get<Product>('/api/product/getProduct/' + productId)
     }
 
     addProduct(product: Product) {

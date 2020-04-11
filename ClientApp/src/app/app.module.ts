@@ -1,4 +1,5 @@
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
@@ -16,6 +17,7 @@ import { ProductListComponent } from './products/ui/product-list.component';
 import { ProductUpdateComponent } from './products/ui/product-update.component';
 import { RegisterComponent } from './register/register.component';
 import { ResetPasswordComponent } from './reset-password/reset-password.component';
+import { MatButtonModule, MatCheckboxModule, MatDialogModule, MatExpansionModule, MatFormFieldModule, MatIconModule, MatInputModule, MatListModule, MatProgressBarModule, MatProgressSpinnerModule, MatSnackBarModule, MAT_LABEL_GLOBAL_OPTIONS, MAT_SNACK_BAR_DEFAULT_OPTIONS, MatAutocompleteModule, MatDivider, MatDividerModule, MatHint } from '@angular/material';
 
 @NgModule({
     declarations: [
@@ -33,9 +35,13 @@ import { ResetPasswordComponent } from './reset-password/reset-password.componen
     ],
     imports: [
         BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
+        BrowserAnimationsModule,
         HttpClientModule,
         FormsModule,
+        MatButtonModule,
+        MatFormFieldModule,
         ReactiveFormsModule,
+        MatInputModule,
         RouterModule.forRoot([
             { path: '', component: HomeComponent, pathMatch: 'full' },
             { path: 'home', redirectTo: '/' },
@@ -49,7 +55,9 @@ import { ResetPasswordComponent } from './reset-password/reset-password.componen
             { path: '**', redirectTo: '/' }
         ])
     ],
-    providers: [AuthGuardService, { provide: HTTP_INTERCEPTORS, useClass: HttpInterceptor, multi: true }],
+    providers: [AuthGuardService,
+        { provide: HTTP_INTERCEPTORS, useClass: HttpInterceptor, multi: true },
+        { provide: MAT_LABEL_GLOBAL_OPTIONS, useValue: { float: 'always' } }],
     bootstrap: [AppComponent]
 })
 
