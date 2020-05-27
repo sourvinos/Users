@@ -13,6 +13,7 @@ export interface CanComponentDeactivate {
 export class AuthGuardService implements CanActivate {
 
     constructor(private accountService: AccountService, private router: Router) { }
+
     canActivate(): Observable<boolean> {
         return this.accountService.isLoggedIn.pipe(map((loginStatus: boolean) => {
             if (!loginStatus || loginStatus === undefined) {

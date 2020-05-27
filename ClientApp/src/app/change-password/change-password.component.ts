@@ -49,6 +49,10 @@ export class ChangePasswordComponent implements OnInit {
         return this.form.get('currentPassword')
     }
 
+    get Passwords() {
+        return this.form.get('passwords')
+    }
+
     get Password() {
         return this.form.get('passwords.password')
     }
@@ -56,8 +60,6 @@ export class ChangePasswordComponent implements OnInit {
     get ConfirmPassword() {
         return this.form.get('passwords.confirmPassword')
     }
-    get Passwords() {
-        return this.form.get('passwords')
-    }
+
 
 }

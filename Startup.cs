@@ -29,11 +29,11 @@ namespace Users {
         public void ConfigureServices(IServiceCollection services) {
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-            services.AddSendGridEmailSender();
+            services.AddEmailSender();
             services.AddSpaStaticFiles(configuration => { configuration.RootPath = "ClientApp/dist"; });
             services.AddCors(options => { options.AddPolicy("EnableCORS", builder => { builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod().Build(); }); });
             services.AddScoped<Token>();
-            services.AddDbContext<ApplicationDbContext>(options => options.UseMySql(Configuration["ConnectionStrings:MySqlServerConnection"]));
+            services.AddDbContext<ApplicationDbContext>(options => options.UseSqlite(Configuration["ConnectionStrings:SqliteConnection"]));
             services.AddIdentity<ApplicationUser, IdentityRole>(options => {
                 options.Password.RequireDigit = false;
                 options.Password.RequiredLength = 1;
@@ -89,7 +89,12 @@ namespace Users {
             app.UseSpaStaticFiles();
             app.UseAuthentication();
             app.UseMvc(routes => { routes.MapRoute(name: "default", template: "{controller}/{action=Index}/{id?}"); });
-            app.UseSpa(spa => { spa.Options.SourcePath = "ClientApp"; if (env.IsDevelopment()) { spa.UseAngularCliServer(npmScript: "start"); } });
+            app.UseSpa(spa => {
+                spa.Options.SourcePath = "ClientApp";
+                if (env.IsDevelopment()) {
+                    spa.UseAngularCliServer(npmScript: "start");
+                }
+            });
         }
 
     }

@@ -31,7 +31,7 @@ namespace Users.Email {
             htmlContent += "<p>" + callbackUrl + "</p>";
             htmlContent += "<p style='font-size: 11px; margin: 2rem 0;'>&copy; People Movers " + DateTime.Now.ToString("yyyy") + "</p>";
             var msg = MailHelper.CreateSingleEmail(from, to, subject, "", htmlContent);
-            var response = client.SendEmailAsync(msg);
+            client.SendEmailAsync(msg);
 
             return new SendEmailResponse();
 
@@ -54,7 +54,7 @@ namespace Users.Email {
             htmlContent += "<p>" + callbackUrl + "</p>";
             htmlContent += "<p style='font-size: 11px; margin: 2rem 0;'>&copy; People Movers " + DateTime.Now.ToString("yyyy") + "</p>";
             var msg = MailHelper.CreateSingleEmail(from, to, subject, "", htmlContent);
-            var response = client.SendEmailAsync(msg);
+            client.SendEmailAsync(msg);
 
             return new SendEmailResponse();
 

@@ -1,18 +1,15 @@
 <h2 class="text-center">Register</h2>
 
 <form [formGroup]="form">
-    <mat-form-field class="example-full-width">
-        <mat-label>Favorite food</mat-label>
-        <input matInput placeholder="Ex. Pizza" value="Sushi">
-    </mat-form-field>
-    <!-- <div class="form-group">
+    <div class="form-group">
         <label for="username">Username</label>
+        <input id="username" formControlName="username" type="text" class="form-control" placeholder="">
         <div *ngIf="Username.touched && Username.invalid" class="text-danger">
             <span *ngIf="Username.errors?.required">This field is required</span>
             <span *ngIf="Username.errors?.maxlength">This field can be up to {{ Username.errors.maxlength.requiredLength }} characters long</span>
             <span *ngIf="Username.errors?.cannotContainSpace">Spaces are not allowed</span>
         </div>
-    </div> -->
+    </div>
     <div class="form-group">
         <label for="displayName">Display name</label>
         <input id="displayName" formControlName="displayName" type="text" class="form-control" placeholder="">
