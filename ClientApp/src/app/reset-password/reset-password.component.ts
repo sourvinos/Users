@@ -36,8 +36,8 @@ export class ResetPasswordComponent implements OnInit {
             email: [this.email],
             token: [this.token],
             passwords: this.formBuilder.group({
-                password: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(128), FieldValidators.cannotContainSpace]],
-                confirmPassword: ['', [Validators.required]],
+                password: ['1234567890', [Validators.required, Validators.minLength(1), Validators.maxLength(128), FieldValidators.cannotContainSpace]],
+                confirmPassword: ['1234567890', [Validators.required]],
             }, { validator: CrossFieldValidators.cannotBeDifferent })
         })
     }

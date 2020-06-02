@@ -11,7 +11,7 @@ export class AccountService {
     private baseUrlRegister = '/api/account/register'
     private baseUrlForgotPassword = '/api/account/forgotPassword'
     private baseUrlResetPassword = '/api/account/resetPassword'
-    private baseUrlToken = '/api/token/auth'
+    private baseUrlToken = '/api/auth/auth'
     private baseUrlChangePassword = '/api/account/changePassword'
 
     private loginStatus = new BehaviorSubject<boolean>(this.checkLoginStatus())
